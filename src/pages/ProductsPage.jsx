@@ -6,7 +6,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 import SmallBox from "../components/dasboard/SmallBox";
-import ProductForm from "../components/products/ProductForm";
+import ProductForm from "../components/products/ProductRegisterForm";
 
 const ProductsPage = () => {
   const headerStyles =
