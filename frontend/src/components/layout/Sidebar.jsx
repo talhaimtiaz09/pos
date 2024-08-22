@@ -3,12 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Sidebar = (props) => {
   const liStyle =
-    "text-white text-lg p-2 hover:bg-lime-600  my-2 px-10 cursor-pointer";
+    "text-txt-white text-lg p-2 hover:bg-lime-600  my-2 px-10 cursor-pointer";
   return (
     <aside className="w-full h-full py-10">
       <nav>
         <div
-          className="pl-2 pr-10 py-4 -mt-10 bg-black text-white hover:bg-white hover:text-black transition flex gap-x-4 text-lg items-center"
+          className="pl-2 pr-10 py-4 -mt-10 bg-black text-txt-white hover:bg-white hover:text-black transition flex gap-x-4 text-lg items-center"
           onClick={() => props.setShowSidebar(false)}
         >
           <FontAwesomeIcon

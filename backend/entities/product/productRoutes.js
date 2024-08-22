@@ -2,13 +2,6 @@ const express = require("express");
 const router = express.Router();
 const productController = require("./productController");
 
-// // Product Routes
-// router.get("/", productController.renderAllProducts);
-// router.get("/:id", productController.renderProductById);
-// router.post("/", productController.createNewProduct);
-// router.put("/:id", productController.updateProduct);
-// router.delete("/:id", productController.deleteProduct);
-
 // Function to log request body (can be used for debugging)
 function requestSeeker(req, res, next) {
   console.log("req.body", req.body);
@@ -35,5 +28,12 @@ router.get("/unit/:id", productController.renderUnitById);
 router.post("/unit", requestSeeker, productController.createNewUnit);
 router.put("/unit/:id", productController.updateUnit);
 router.delete("/unit/:id", productController.deleteUnit);
+
+// // Product Routes
+router.get("/", productController.renderAllProducts);
+router.get("/:id", productController.renderProductById);
+router.post("/", productController.createNewProduct);
+router.put("/:id", productController.updateProduct);
+router.delete("/:id", productController.deleteProduct);
 
 module.exports = router;

@@ -12,7 +12,7 @@ const SidebarItem = ({ title, icon, links }) => {
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className={`flex items-center justify-between w-full px-4 py-2 my-2 text-left ${
-          isExpanded ? "bg-primary text-white" : "hover:bg-gray-200"
+          isExpanded ? "bg-primary text-txt-white" : "hover:bg-bkg-dark"
         } transition duration-300`}
       >
         <div className="flex items-center">
@@ -22,7 +22,7 @@ const SidebarItem = ({ title, icon, links }) => {
         <FontAwesomeIcon icon={isExpanded ? faCaretDown : faCaretRight} />
       </button>
       {isExpanded && (
-        <div className="pl-6 bg-gray-100">
+        <div className="pl-6 bg-bkg-dark">
           {links.map((link) => (
             <Link
               key={link.path}

@@ -13,10 +13,10 @@ const ProductsPage = () => {
     "rounded-lg p-6 bg-white bg-opacity-80 pr-12 shadow-md text-gray-900";
 
   return (
-    <div className="min-h-screen bg-gray-800 text-white">
+    <div className="min-h-screen bg-gray-800 text-txt-white">
       <nav className="flex justify-between items-center p-6 bg-gray-900 bg-opacity-90">
         <div className="font-bold">
-          <h1 className="text-3xl tracking-wider text-white">
+          <h1 className="text-3xl tracking-wider text-txt-white">
             Products <span className="block">Management</span>
           </h1>
         </div>
@@ -38,7 +38,7 @@ const ProductsPage = () => {
 
       <div className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="p-6 bg-blue-600 rounded-lg shadow-md flex items-center justify-between hover:bg-blue-500 transition">
+          <div className="p-6 bg-primary-hover rounded-lg shadow-md flex items-center justify-between hover:bg-primary transition">
             <p className="text-xl">Add New Product</p>
             <FontAwesomeIcon icon={faPlusSquare} className="text-2xl" />
           </div>

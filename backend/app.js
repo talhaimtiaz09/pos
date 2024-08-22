@@ -32,19 +32,20 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Import and use routes
 const entities = [
-  //   "account",
+  "account",
   "company",
   //   "damage",
   "product",
   //   "expense",
   //   "inventory",
   //   "invoice",
-  //   "sale",
-  //   "stakeholder",
+  "sales",
+  "stakeholder",
   //   "transaction",
   //   "user",
   //   "batch",
   "customer",
+  "inventory",
 ];
 entities.forEach((entity) => {
   const routes = require(`./entities/${entity}/${entity}Routes`);

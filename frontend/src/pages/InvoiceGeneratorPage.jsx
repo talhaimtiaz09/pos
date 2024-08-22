@@ -67,13 +67,13 @@ const InvoiceGeneratorPage = () => {
                   <th className="py-2 px-4 text-left text-sm font-medium text-slate-800 uppercase tracking-wider bg-lime-500">
                     Description
                   </th>
-                  <th className="py-2 px-4 text-left text-sm font-medium text-white uppercase tracking-wider bg-slate-800">
+                  <th className="py-2 px-4 text-left text-sm font-medium text-txt-white uppercase tracking-wider bg-slate-800">
                     Quantity
                   </th>
-                  <th className="py-2 px-4 text-left text-sm font-medium text-white uppercase tracking-wider bg-slate-800">
+                  <th className="py-2 px-4 text-left text-sm font-medium text-txt-white uppercase tracking-wider bg-slate-800">
                     Unit Price
                   </th>
-                  <th className="py-2 px-4 text-left text-sm font-medium text-white uppercase tracking-wider bg-slate-800">
+                  <th className="py-2 px-4 text-left text-sm font-medium text-txt-white uppercase tracking-wider bg-slate-800">
                     Total
                   </th>
                 </tr>
@@ -161,7 +161,7 @@ const InvoiceGeneratorPage = () => {
             eligendi temporibus et tempora adipisci vitae cumque nostrum neque.
             Asperiores, quis!
           </p>
-          <div className="invoice-footer text-center bg-slate-800 text-white p-4 rounded-b-lg">
+          <div className="invoice-footer text-center bg-slate-800 text-txt-white p-4 rounded-b-lg">
             <p className="text-base mt-4">Thank you for your business!</p>
             <p className="text-base">
               Address: Loremetur, adipisicing elit. Quidem, nam.
@@ -173,7 +173,7 @@ const InvoiceGeneratorPage = () => {
       <div className="text-center py-6">
         <button
           onClick={generatePDF}
-          className="bg-lime-500 hover:bg-lime-600 text-white font-bold py-2 px-6 rounded-lg focus:outline-none"
+          className="bg-lime-500 hover:bg-lime-600 text-txt-white font-bold py-2 px-6 rounded-lg focus:outline-none"
         >
           Download Invoice
         </button>

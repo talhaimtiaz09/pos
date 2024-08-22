@@ -6,14 +6,14 @@ router.get("/test", (req, res) => {
   res.send("Hello from customer route");
 });
 
-router.get("/get-all", customerController.renderAllcustomers);
+router.get("/", customerController.renderAllcustomers);
 
 router.get("/:id", customerController.rendercustomerById);
 
-router.post("/new", customerController.createNewcustomer);
+router.post("/", customerController.createNewcustomer);
 
-router.put("/update/:id", customerController.updatecustomer);
+router.put("/:id", customerController.updatecustomer);
 
-router.delete("/delete/:id", customerController.deletecustomer);
+router.delete("/:id", customerController.deletecustomer);
 
 module.exports = router;

@@ -1,43 +1,31 @@
-import React, { useState } from "react";
-import Navbar from "../components/layout/Navbar"; // Adjust the import path as necessary
-import CustomersPage from "./CustomersPage";
-import InventoryPage from "./InventoryPage";
-import ProductsPage from "./ProductsPage";
-import CompaniesPage from "./CompaniesPage";
-import InvoiceGeneratorPage from "./InvoiceGeneratorPage";
+import React from "react";
 
 const Dashboard = () => {
-  const [currentView, setCurrentView] = useState("customers");
-  const [currentoption, setCurrentOption] = useState("list");
-
-  const setView = (view) => {
-    setCurrentView(view);
-  };
-  const setOption = (opt) => {
-    setCurrentOption(opt);
-  };
-
   return (
-    <div
-      id="dashboard"
-      className="dashboard relative min-h-screen flex bg-black-dark "
-    >
-      <Navbar
-        selectView={setView}
-        selectOption={setOption}
-        currentView={currentView}
-        props={props}
-      />
-
-      <div className="flex-1 flex flex-col">
-        <main className="p-8">
-          {currentView === "dashboard" && <div>Dashboard Content</div>}
-          {currentView === "customers" && <CustomersPage props={props} />}
-          {currentView === "inventory" && <InventoryPage />}
-          {currentView === "products" && <ProductsPage />}
-          {currentView === "companies" && <CompaniesPage />}
-          {currentView === "invoiceGenerator" && <InvoiceGeneratorPage />}
-        </main>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
+      <div class="p-8 bg-white text-gray-800 rounded shadow-md border border-gray-300">
+        <p>White - #FFFFFF</p>
+      </div>
+      <div class="p-8 bg-[#F8F8FF] text-gray-800 rounded shadow-md">
+        <p>Ghost White - #F8F8FF</p>
+      </div>
+      <div class="p-8 bg-[#FFFAFA] text-gray-800 rounded shadow-md">
+        <p>Snow White - #FFFAFA</p>
+      </div>
+      <div class="p-8 bg-[#F0F8FF] text-gray-800 rounded shadow-md">
+        <p>Ice White - #F0F8FF</p>
+      </div>
+      <div class="p-8 bg-[#F5FFFA] text-gray-800 rounded shadow-md">
+        <p>Mint Cream - #F5FFFA</p>
+      </div>
+      <div class="p-8 bg-[#F0FFFF] text-gray-800 rounded shadow-md">
+        <p>Azure White - #F0FFFF</p>
+      </div>
+      <div class="p-8 bg-[#F5F5F5] text-gray-800 rounded shadow-md">
+        <p>Seashell White - #F5F5F5</p>
+      </div>
+      <div class="p-8 bg-[#E0FFFF] text-gray-800 rounded shadow-md">
+        <p>Light Cyan - #E0FFFF</p>
       </div>
     </div>
   );

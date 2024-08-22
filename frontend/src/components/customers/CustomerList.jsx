@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import fetchData from "../../utils/fetchData"; // Adjust the path to your fetchData function
 
-const PAGE_SIZE = 5; // Number of customers per page
+const PAGE_SIZE = 8; // Number of customers per page
 
 const CustomerList = () => {
   const [customers, setCustomers] = useState([]);
@@ -12,11 +12,12 @@ const CustomerList = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [enableEdit, setEnableEdit] = useState(false);
 
   useEffect(() => {
     const getCustomers = async () => {
       try {
-        const response = await fetchData("/customer/get-all", "GET");
+        const response = await fetchData("/customer", "GET");
         setCustomers(response.data);
         setTotalPages(Math.ceil(response.data.length / PAGE_SIZE));
         setLoading(false);
@@ -54,7 +55,9 @@ const CustomerList = () => {
   };
 
   const handleLetterFilter = (letter) => {
+    console.log("letter selected: ", letter);
     setSelectedLetter(letter);
+
     setCurrentPage(1); // Reset to the first page when filtering by letter
   };
 
@@ -70,73 +73,112 @@ const CustomerList = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="w-2/3 mx-auto my-10">
-      <h2 className="text-2xl font-bold mb-6 text-black">Customer List</h2>
+    <div className="w-full max-w-6xl mx-auto my-10 px-4">
+      <div className="bg-ice-white rounded-md   p-4">
+        <h2 className="text-2xl font-bold mb-6 text-primary">Customer List</h2>
 
-      {/* Search and Filter */}
-      <div className="mb-6">
-        <input
-          type="text"
-          placeholder="Search customers..."
-          value={searchQuery}
-          onChange={handleSearch}
-          className="w-full px-3 py-2 border rounded-lg bg-transparent border-1 border-slate-100"
-        />
+        {/* Search */}
+        <div className="mb-6">
+          <input
+            type="text"
+            placeholder="Search customers..."
+            value={searchQuery}
+            onChange={handleSearch}
+            className="w-full px-3 py-2 border rounded-lg border-gray-300"
+          />
+        </div>
       </div>
 
-      <div className="mb-6">
+      {/* Filter by Letter */}
+      <div className="mb-6 bg-ice-white my-4 p-4 rounded-md">
         <h3 className="text-lg font-semibold mb-2">Filter by Letter:</h3>
-        <div className="flex flex-wrap">
-          {"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((letter) => (
-            <button
-              key={letter}
-              onClick={() => handleLetterFilter(letter)}
-              className={`mr-2 mb-2 px-3 py-1 border rounded-lg ${
-                selectedLetter === letter
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200"
-              }`}
-            >
-              {letter}
-            </button>
-          ))}
+        <div className="flex items-center flex-wrap mb-4">
+          <select
+            className="w-32 rounded-md mr-4 py-1 px-4 "
+            onChange={(e) => handleLetterFilter(e.target.value)}
+          >
+            {"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((letter) => (
+              <option
+                key={letter}
+                value={letter}
+                className={`mr-2 mb-2 px-3 py-1 border rounded-lg ${
+                  selectedLetter === letter
+                    ? "bg-primary text-txt-white"
+                    : "bg-gray-200"
+                }`}
+              >
+                {letter}
+              </option>
+            ))}
+          </select>
           <button
             onClick={() => handleLetterFilter("")}
-            className={`mr-2 mb-2 px-3 py-1 border rounded-lg ${
-              !selectedLetter ? "bg-blue-500 text-white" : "bg-gray-200"
+            className={`mr-2  px-8 py-1 border rounded-lg ${
+              !selectedLetter ? "bg-primary text-txt-white" : "bg-gray-200"
             }`}
           >
             All
           </button>
+          <button
+            onClick={() => setEnableEdit(!enableEdit)}
+            className={`mr-2  px-8 py-1 border-[1px] rounded-lg hover:bg-primary hover:text-txt-white ${
+              enableEdit
+                ? "bg-primary text-txt-white"
+                : "bg-gray-200 border-gray-500"
+            }`}
+          >
+            Edit
+          </button>
         </div>
       </div>
 
-      {/* Customer List */}
-      <ul className="bg-white shadow rounded-lg divide-y divide-gray-200">
-        {paginatedCustomers.map((customer) => (
-          <li
-            key={customer.id}
-            className="p-4 hover:bg-gray-100 transition flex justify-between items-center"
-          >
-            <div>
-              <p className="text-lg font-semibold">{customer.name}</p>
-              <p className="text-gray-600">{customer.address}</p>
-              <p className="text-gray-600">{customer.phone}</p>
-            </div>
-            <div>
-              <button className="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600 transition">
-                Edit
-              </button>
-              <button className="bg-red-500 text-white py-1 px-3 ml-2 rounded hover:bg-red-600 transition">
-                Delete
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {/* Customer Table */}
+      <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow">
+        <thead className="bg-gray-200">
+          <tr>
+            <th className="px-4 py-2 border-b text-left">Name</th>
+            <th className="px-4 py-2 border-b text-left">Address</th>
+            <th className="px-4 py-2 border-b text-left">Phone</th>
+            {enableEdit && (
+              <th className="px-4 py-2 border-b text-left">Actions</th>
+            )}
+          </tr>
+        </thead>
+        <tbody>
+          {paginatedCustomers.length > 0 ? (
+            paginatedCustomers.map((customer) => (
+              <tr key={customer.id}>
+                <td className="px-4 py-2 border-b">{customer.name || "N/A"}</td>
+                <td className="px-4 py-2 border-b">
+                  {customer.address || "N/A"}
+                </td>
+                <td className="px-4 py-2 border-b">
+                  {customer.phone || "N/A"}
+                </td>
+                {enableEdit && (
+                  <td className="px-4 py-2 border-b">
+                    <button className="bg-primary text-txt-white py-1 px-2 rounded hover:bg-primary-hover transition">
+                      Edit
+                    </button>
+                    <button className="bg-red-500 text-txt-white py-1 px-2 ml-2 rounded hover:bg-red-600 transition">
+                      Delete
+                    </button>
+                  </td>
+                )}
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="4" className="px-4 py-2 border-b text-center">
+                No customers available
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
 
       {/* Pagination */}
-      <div className="mt-6 flex justify-center">
+      <div className="mt-6 flex justify-center space-x-2">
         <button
           onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
           className="px-4 py-2 border rounded-lg bg-gray-200 hover:bg-gray-300"
@@ -148,7 +190,9 @@ const CustomerList = () => {
             key={i}
             onClick={() => handlePageChange(i + 1)}
             className={`px-4 py-2 mx-1 border rounded-lg ${
-              currentPage === i + 1 ? "bg-blue-500 text-white" : "bg-gray-200"
+              currentPage === i + 1
+                ? "bg-primary text-txt-white"
+                : "bg-gray-200"
             }`}
           >
             {i + 1}

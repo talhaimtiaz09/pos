@@ -1,5 +1,9 @@
 BEGIN;
 
+-- -- Drop schema and all tables if they exist
+-- DROP SCHEMA IF EXISTS public CASCADE;
+-- CREATE SCHEMA IF NOT EXISTS public;
+
 -- Drop tables if they exist
 DROP TABLE IF EXISTS public.accounts CASCADE;
 DROP TABLE IF EXISTS public.account_categories CASCADE;
@@ -15,7 +19,7 @@ DROP TABLE IF EXISTS public.inventory_records CASCADE;
 DROP TABLE IF EXISTS public.inventory_items CASCADE;
 DROP TABLE IF EXISTS public.inventory_locations CASCADE;
 DROP TABLE IF EXISTS public.batch_locations CASCADE;
-
+DROP TABLE IF EXISTS public.credit_payment CASCADE;
 DROP TABLE IF EXISTS public.weekly_analytics CASCADE;
 DROP TABLE IF EXISTS public.product_categories CASCADE;
 DROP TABLE IF EXISTS public.product_subcategories CASCADE;
@@ -100,46 +104,12 @@ CREATE TABLE IF NOT EXISTS public.products (
     FOREIGN KEY (supplier_id) REFERENCES public.companies (id)
 );
 
+
+
 -- Create inventory table
 CREATE TABLE IF NOT EXISTS public.inventory (
     id serial PRIMARY KEY,
-    category_id integer,
-    max_limit numeric(10, 2) DEFAULT 0,
-    min_limit numeric(10, 2) DEFAULT 0,
-    FOREIGN KEY (category_id) REFERENCES public.product_categories (id)
-);
-
-
--- Table for storing batch details 
-CREATE TABLE IF NOT EXISTS public.batch_details (
-    id serial PRIMARY KEY,
-    batch_number varchar(50) NOT NULL,
-    manufacture_date date DEFAULT NULL,
-    expiry_date date
-);
-
--- Table for storing product batches
-CREATE TABLE IF NOT EXISTS public.product_batches (
-    id serial PRIMARY KEY,
-    quantity numeric(10, 2) NOT NULL,
-    inventory_item_id integer NOT NULL,
-    purchase_price numeric(10, 2) NOT NULL,
-    is_active boolean DEFAULT TRUE,
-    additional_details_id integer,
-    FOREIGN KEY (additional_details_id) REFERENCES public.batch_details (id),
-    FOREIGN KEY (inventory_item_id) REFERENCES public.products (id)
-);
-
--- Table for storing inventory records (movements of inventory)
-CREATE TABLE IF NOT EXISTS public.inventory_records (
-    id serial PRIMARY KEY,
-    inventory_id integer NOT NULL,
-    batch_id integer NOT NULL,
-    quantity numeric(10, 2) NOT NULL,
-    record_type varchar(50) NOT NULL, -- e.g., "IN", "OUT", "ADJUSTMENT"
-    record_date timestamp DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (batch_id) REFERENCES public.product_batches (id),
-    FOREIGN KEY (inventory_id) REFERENCES public.inventory (id)
+    inventory_name varchar(255) NOT NULL UNIQUE
 );
 
 -- Create inventory locations table
@@ -148,14 +118,42 @@ CREATE TABLE IF NOT EXISTS public.inventory_locations (
     location_name varchar(255) NOT NULL UNIQUE
 );
 
--- Create batch locations table
-CREATE TABLE IF NOT EXISTS public.batch_locations (
+-- Create product batches table
+CREATE TABLE IF NOT EXISTS public.product_batches (
+    id serial PRIMARY KEY,
+    quantity numeric(10, 2) NOT NULL CHECK (quantity >= 0),
+    product_id integer NOT NULL,
+    purchase_price numeric(10, 2) NOT NULL,
+    is_active boolean DEFAULT TRUE,
+    location_id integer,
+    inventory_id integer,
+    FOREIGN KEY (product_id) REFERENCES public.products (id),
+    FOREIGN KEY (location_id) REFERENCES public.inventory_locations (id),
+    FOREIGN KEY (inventory_id) REFERENCES public.inventory (id)
+);
+
+-- Create batch details table
+CREATE TABLE IF NOT EXISTS public.batch_details (
     id serial PRIMARY KEY,
     batch_id integer NOT NULL,
-    location_id integer NOT NULL,
-    FOREIGN KEY (batch_id) REFERENCES public.product_batches (id),
-    FOREIGN KEY (location_id) REFERENCES public.inventory_locations (id)
+    batch_number varchar(50) NOT NULL UNIQUE,
+    manufacture_date date DEFAULT NULL,
+    expiry_date date,
+    FOREIGN KEY (batch_id) REFERENCES public.product_batches (id)
 );
+
+-- Create inventory records table
+CREATE TABLE IF NOT EXISTS public.inventory_records (
+    id serial PRIMARY KEY,
+    batch_id integer NOT NULL,
+    quantity numeric(10, 2) NOT NULL CHECK (quantity > 0),
+    record_type varchar(50) NOT NULL CHECK (record_type IN ('IN', 'OUT', 'ADJUSTMENT')),
+    record_date timestamp DEFAULT CURRENT_TIMESTAMP,
+    inventory_id integer,
+    FOREIGN KEY (batch_id) REFERENCES public.product_batches (id),
+    FOREIGN KEY (inventory_id) REFERENCES public.inventory (id)
+);
+
 
 -- Create accounts table
 CREATE TABLE IF NOT EXISTS public.accounts (
@@ -178,6 +176,7 @@ CREATE TABLE IF NOT EXISTS public.company_bookings (
     quantity numeric(10, 2) NOT NULL,
     product_id integer,
     booking_date timestamp DEFAULT CURRENT_TIMESTAMP,
+    is_pending boolean DEFAULT TRUE,
     FOREIGN KEY (company_id) REFERENCES public.companies (id),
     FOREIGN KEY (product_id) REFERENCES public.products (id)
 );
@@ -200,43 +199,6 @@ CREATE TABLE IF NOT EXISTS public.customers (
     phone varchar(15) NOT NULL UNIQUE
 );
 
--- Create expense categories table
-CREATE TABLE IF NOT EXISTS public.expense_categories (
-    id serial PRIMARY KEY,
-    name varchar(50) NOT NULL UNIQUE
-);
-
--- Create expenses table
-CREATE TABLE IF NOT EXISTS public.expenses (
-    id serial PRIMARY KEY,
-    date timestamp DEFAULT CURRENT_TIMESTAMP,
-    amount numeric(10, 2) NOT NULL,
-    category integer NOT NULL,
-    account_id integer,
-    FOREIGN KEY (account_id) REFERENCES public.accounts (id),
-    FOREIGN KEY (category) REFERENCES public.expense_categories (id)
-);
-
-
-
--- Create weekly analytics table
-CREATE TABLE IF NOT EXISTS public.weekly_analytics (
-    id serial PRIMARY KEY,
-    month varchar(50) NOT NULL,
-    year integer NOT NULL,
-    customer_gained integer NOT NULL,
-    damage numeric(10, 2) NOT NULL,
-    total_revenue numeric(10, 2) NOT NULL,
-    expense numeric(10, 2) NOT NULL,
-    sales numeric(10, 2) NOT NULL
-);
-
--- Create sales types table
-CREATE TABLE IF NOT EXISTS public.sales_types (
-    id serial PRIMARY KEY,
-    name varchar(50) NOT NULL UNIQUE
-);
-
 -- Create sales table
 CREATE TABLE IF NOT EXISTS public.sales (
     id serial PRIMARY KEY,
@@ -246,14 +208,28 @@ CREATE TABLE IF NOT EXISTS public.sales (
     quantity numeric(10, 2) NOT NULL,
     account_id integer,
     price numeric(10, 2) NOT NULL,
-    discount numeric(5, 2) DEFAULT 0,
-    sale_type_id integer,
     stakeholder_id integer,
+    is_pending boolean DEFAULT FALSE,
+    batch_id integer,
+    FOREIGN KEY (batch_id) REFERENCES public.product_batches (id),
     FOREIGN KEY (customer_id) REFERENCES public.customers (id),
     FOREIGN KEY (product_id) REFERENCES public.products (id),
     FOREIGN KEY (account_id) REFERENCES public.accounts (id),
-    FOREIGN KEY (sale_type_id) REFERENCES public.sales_types (id),
     FOREIGN KEY (stakeholder_id) REFERENCES public.stakeholder (id)
+);
+
+
+
+-- Create credit payment table
+CREATE TABLE IF NOT EXISTS public.credit_payment (
+    id serial PRIMARY KEY,
+    sale_id integer,
+    amount_left numeric(10, 2) NOT NULL,
+    amount_paid numeric(10, 2) NOT NULL,
+    payment_date timestamp DEFAULT CURRENT_TIMESTAMP,
+    account_id integer,
+    FOREIGN KEY (account_id) REFERENCES public.accounts (id),
+    FOREIGN KEY (sale_id) REFERENCES public.sales (id)
 );
 
 -- Create transactions table
@@ -268,34 +244,230 @@ CREATE TABLE IF NOT EXISTS public.transactions (
     FOREIGN KEY (to_account_id) REFERENCES public.accounts (id)
 );
 
--- Table for storing stock
-CREATE TABLE IF NOT EXISTS public.stock (
-    id serial PRIMARY KEY,
-    product_id integer,
-    current_stock numeric(10, 2) NOT NULL DEFAULT 0,
-    FOREIGN KEY (product_id) REFERENCES public.products (id)
-);
-
--- Table for storing credit sales
-CREATE TABLE IF NOT EXISTS public.credit_sales (
-    id serial PRIMARY KEY,
-    date timestamp DEFAULT CURRENT_TIMESTAMP,
-    customer_id integer,
-    balance numeric(10, 2) NOT NULL,
-    sale_id integer,
-    FOREIGN KEY (customer_id) REFERENCES public.customers (id),
-    FOREIGN KEY (sale_id) REFERENCES public.sales (id)
-);
 
 
--- Create damages table
-CREATE TABLE IF NOT EXISTS public.product_damages (
-    id serial PRIMARY KEY,
-    quantity numeric(10, 2) NOT NULL,
-    damage_date date DEFAULT CURRENT_TIMESTAMP,
-    product_id integer,
-    FOREIGN KEY (product_id) REFERENCES public.products (id)
-);
 
 
+
+
+
+
+
+
+
+
+
+
+
+-- Insert data into account_categories
+INSERT INTO public.account_categories (name) VALUES
+('Assets'),
+('Liabilities'),
+('Equity'),
+('Revenue'),
+('Expenses');
+
+-- Insert data into product_categories
+INSERT INTO public.product_categories (category_name) VALUES
+('Electronics'),
+('Clothing'),
+('Food & Beverages'),
+('Furniture'),
+('Stationery');
+
+-- Insert data into product_subcategories
+INSERT INTO public.product_subcategories (subcategory_name, category_id) VALUES
+('Mobile Phones', 1),
+('Men Clothing', 2),
+('Dairy Products', 3),
+('Office Chairs', 4),
+('Notebooks', 5);
+
+-- Insert data into product_units
+INSERT INTO public.product_units (name) VALUES
+('Piece'),
+('Kilogram'),
+('Liter'),
+('Pack'),
+('Box');
+
+-- Insert data into companies
+INSERT INTO public.companies (name, category, subcategory) VALUES
+('Tech Solutions', 1, 1),
+('Stylish Wear', 2, 2),
+('Fresh Foods', 3, 3),
+('Comfort Furniture', 4, 4),
+('Paper World', 5, 5);
+
+-- Insert data into stakeholder_categories
+INSERT INTO public.stakeholder_categories (name) VALUES
+('Supplier'),
+('Customer'),
+('Employee'),
+('Partner'),
+('Contractor');
+
+-- Insert data into stakeholder
+INSERT INTO public.stakeholder (name, contact, address, category) VALUES
+('Ali Khan', '03001234567', 'Karachi, Sindh', 1),
+('Ayesha Ahmed', '03214567890', 'Lahore, Punjab', 2),
+('Umer Farooq', '03331234567', 'Islamabad, ICT', 3),
+('Sana Sheikh', '03451234567', 'Multan, Punjab', 4),
+('Bilal Hussain', '03121234567', 'Quetta, Balochistan', 5);
+
+-- Insert data into products
+INSERT INTO public.products (name, category_id, sub_category_id, short_name, unit_id, supplier_id) VALUES
+('iPhone 13', 1, 1, 'iPhone', 1, 1),
+('Men T-Shirt', 2, 2, 'T-Shirt', 1, 2),
+('Milk 1L', 3, 3, 'Milk', 3, 3),
+('Office Chair', 4, 4, 'Chair', 1, 4),
+('A4 Notebook', 5, 5, 'Notebook', 5, 5);
+
+-- Insert data into inventory
+INSERT INTO public.inventory (inventory_name) VALUES
+('Main Warehouse'),
+('Secondary Warehouse'),
+('Outlet 1'),
+('Outlet 2'),
+('Outlet 3');
+
+-- Insert data into inventory_locations
+INSERT INTO public.inventory_locations (location_name) VALUES
+('Karachi Warehouse'),
+('Lahore Warehouse'),
+('Islamabad Store'),
+('Multan Store'),
+('Quetta Store');
+
+-- Insert data into product_batches
+INSERT INTO public.product_batches (quantity, product_id, purchase_price, location_id, inventory_id) VALUES
+(100, 1, 100000, 1, 1),
+(200, 2, 500, 2, 2),
+(300, 3, 150, 3, 3),
+(50, 4, 7500, 4, 4),
+(500, 5, 50, 5, 5);
+
+-- Insert data into batch_details
+INSERT INTO public.batch_details (batch_id, batch_number, manufacture_date, expiry_date) VALUES
+(1, 'BATCH001', '2024-01-01', '2025-01-01'),
+(2, 'BATCH002', '2024-02-01', '2025-02-01'),
+(3, 'BATCH003', '2024-03-01', '2025-03-01'),
+(4, 'BATCH004', '2024-04-01', '2025-04-01'),
+(5, 'BATCH005', '2024-05-01', '2025-05-01');
+
+-- Insert data into inventory_records
+INSERT INTO public.inventory_records (batch_id, quantity, record_type, inventory_id) VALUES
+(1, 50, 'IN', 1),
+(2, 100, 'IN', 2),
+(3, 150, 'IN', 3),
+(4, 20, 'IN', 4),
+(5, 250, 'IN', 5);
+
+-- Insert data into accounts
+INSERT INTO public.accounts (name, category, min_limit, max_limit, balance, owner_id) VALUES
+('Cash Account', 1, NULL, NULL, 100000, 1),
+('Bank Account', 1, NULL, NULL, 200000, 2),
+('Inventory Account', 1, NULL, NULL, 150000, 3),
+('Sales Revenue', 4, NULL, NULL, 300000, 4),
+('Expenses Account', 5, NULL, NULL, 50000, 5);
+
+-- Insert data into company_bookings
+INSERT INTO public.company_bookings (company_id, amount, quantity, product_id) VALUES
+(1, 50000, 5, 1),
+(2, 10000, 20, 2),
+(3, 15000, 30, 3),
+(4, 3000, 2, 4),
+(5, 500, 10, 5);
+
+-- Insert data into company_sales_reps
+INSERT INTO public.company_sales_reps (name, contact, address, company_id) VALUES
+('Ahmed Raza', '03001234568', 'Karachi, Sindh', 1),
+('Fatima Noor', '03214567891', 'Lahore, Punjab', 2),
+('Hassan Ali', '03331234568', 'Islamabad, ICT', 3),
+('Sara Malik', '03451234568', 'Multan, Punjab', 4),
+('Zainab Khan', '03121234568', 'Quetta, Balochistan', 5);
+
+-- Insert data into customers
+INSERT INTO public.customers (name, address, phone) VALUES
+('Hamza Shah', 'Karachi, Sindh', '03011234567'),
+('Zara Tariq', 'Lahore, Punjab', '03214567892'),
+('Aliya Kamran', 'Islamabad, ICT', '03331234569'),
+('Raza Hussain', 'Multan, Punjab', '03451234569'),
+('Maira Qasim', 'Quetta, Balochistan', '03121234569');
+
+-- Insert data into sales
+INSERT INTO public.sales (customer_id, product_id, quantity, account_id, price, stakeholder_id, batch_id) VALUES
+(1, 1, 1, 1, 100000, 1, 1),
+(2, 2, 2, 2, 1000, 2, 2),
+(3, 3, 3, 3, 450, 3, 3),
+(4, 4, 1, 4, 15000, 4, 4),
+(5, 5, 5, 5, 250, 5, 5);
+
+
+-- Insert data into credit_payment
+INSERT INTO public.credit_payment (sale_id, amount_left, amount_paid, account_id) VALUES
+(1, 50000, 50000, 1),
+(2, 500, 500, 2),
+(3, 225, 225, 3),
+(4, 7500, 7500, 4),
+(5, 125, 125, 5);
+
+-- Insert data into transactions
+INSERT INTO public.transactions (amount, transaction_type, from_account_id, to_account_id) VALUES
+(50000, 'Transfer', 1, 2),
+(10000, 'Transfer', 2, 3),
+(15000, 'Transfer', 3, 4),
+(3000, 'Transfer', 4, 5),
+(500, 'Transfer', 5, 1);
+
+
+CREATE OR REPLACE FUNCTION update_batch_before_sale() 
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Check if the batch has enough quantity for the sale, allowing it to reduce to zero
+    IF (SELECT quantity FROM product_batches WHERE id = NEW.batch_id) < NEW.quantity THEN
+        RAISE EXCEPTION 'Insufficient quantity in batch for this sale';
+    END IF;
+
+    -- Decrease the quantity of the batch by the quantity sold
+    UPDATE product_batches
+    SET quantity = quantity - NEW.quantity
+    WHERE id = NEW.batch_id;
+
+    -- Check if the quantity has reached zero, and if so, mark the batch as inactive
+    IF (SELECT quantity FROM product_batches WHERE id = NEW.batch_id) = 0 THEN
+        UPDATE product_batches
+        SET is_active = FALSE
+        WHERE id = NEW.batch_id;
+    END IF;
+
+    RETURN NEW;
 END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER before_sale_insert
+BEFORE INSERT ON sales
+FOR EACH ROW
+EXECUTE FUNCTION update_batch_before_sale();
+
+
+
+CREATE OR REPLACE FUNCTION increment_account_balance_after_sale() 
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Increment the account balance by the total sale amount (price * quantity)
+    UPDATE accounts
+    SET balance = balance + (NEW.price * NEW.quantity)
+    WHERE id = NEW.account_id;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER after_sale_insert
+AFTER INSERT ON sales
+FOR EACH ROW
+EXECUTE FUNCTION increment_account_balance_after_sale();
+
+
+COMMIT;

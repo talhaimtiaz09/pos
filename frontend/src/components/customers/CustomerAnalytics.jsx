@@ -36,7 +36,7 @@ const CustomerAnalytics = ({ onBack }) => {
       <div className="mb-4">
         <button
           onClick={onBack}
-          className="px-4 py-2 bg-red-800 text-white rounded-lg shadow-md hover:bg-red-700 transition"
+          className="px-4 py-2 bg-red-800 text-txt-white rounded-lg shadow-md hover:bg-red-700 transition"
         >
           Back
         </button>

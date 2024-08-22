@@ -5,11 +5,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const CompanyRegister = () => {
   const [companies, setCompanies] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [subcategories, setSubcategories] = useState([]);
+
   const [newCompany, setNewCompany] = useState({
     name: "",
     category: "",
-    subcategory: "",
   });
   const [newSalesRep, setNewSalesRep] = useState({
     name: "",
@@ -27,16 +26,13 @@ const CompanyRegister = () => {
     const fetchInitialData = async () => {
       try {
         const categoryResponse = await fetchData("product/category", "GET");
-        const subcategoryResponse = await fetchData(
-          "product/subcategory",
-          "GET"
-        );
+
         const companyResponse = await fetchData("company", "GET");
 
         setCategories(categoryResponse.data || []);
-        setSubcategories(subcategoryResponse.data || []);
-        console.log("subcategories", subcategoryResponse.data);
+
         console.log("categories", categoryResponse.data);
+        console.log("companies", companyResponse.data);
         setCompanies(companyResponse.data || []);
         setLoading(false);
       } catch (err) {
@@ -55,7 +51,7 @@ const CompanyRegister = () => {
     try {
       const response = await fetchData("/company", "POST", newCompany);
       setCompanies([...companies, response.data]);
-      setNewCompany({ name: "", category: "", subcategory: "" });
+      setNewCompany({ name: "", category: "" });
     } catch (err) {
       setError(err.message || "An error occurred while adding the company.");
     }
@@ -136,8 +132,8 @@ const CompanyRegister = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="w-2/3 mx-auto my-10">
-      <h2 className="text-2xl font-bold mb-6 text-black">Register Company</h2>
+    <div className="w-2/3 mx-auto my-10 text-txt-white">
+      <h2 className="text-2xl font-bold mb-6 ">Register Company</h2>
 
       {/* Add New Company */}
       <form onSubmit={handleNewCompany} className="mb-6 space-y-4">
@@ -168,39 +164,16 @@ const CompanyRegister = () => {
             </option>
           ))}
         </select>
-        <select
-          name="subcategory"
-          value={newCompany.subcategory}
-          onChange={(e) =>
-            setNewCompany({ ...newCompany, subcategory: e.target.value })
-          }
-          className="w-full px-3 py-2 border rounded-lg bg-transparent border-2 border-slate-400"
-          required
-        >
-          <option value="">Select Subcategory</option>
-          {subcategories
-            .filter(
-              (subcategory) => subcategory.category_id == newCompany.category
-            )
-            .map((filteredSubcategory) => (
-              <option
-                key={filteredSubcategory.id}
-                value={filteredSubcategory.id}
-              >
-                {filteredSubcategory.subcategory_name}
-              </option>
-            ))}
-        </select>
 
         <button
           type="submit"
-          className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+          className="bg-primary text-txt-white py-2 px-4 rounded-lg hover:bg-primary-hover"
         >
           Add Company
         </button>
       </form>
 
-      <h2 className="text-2xl font-bold mb-6 text-black">
+      <h2 className="text-2xl font-bold mb-6 ">
         Register Sales Representative
       </h2>
 
@@ -247,28 +220,28 @@ const CompanyRegister = () => {
           required
         >
           <option value="">Select Company</option>
-          {companies.map((company) => (
-            <option key={company.id} value={company.id}>
-              {company.name}
-            </option>
-          ))}
+          {companies &&
+            companies.map((company) => (
+              <option key={company.id} value={company.id}>
+                {company.name}
+              </option>
+            ))}
         </select>
         <button
           type="submit"
-          className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+          className="bg-primary text-txt-white py-2 px-4 rounded-lg hover:bg-primary-hover"
         >
           Add Sales Rep
         </button>
       </form>
 
       {/* Display Companies */}
-      <h3 className="text-xl font-bold mb-4 text-black">Companies</h3>
-      <table className="min-w-full bg-white shadow rounded-lg">
+      <h3 className="text-xl font-bold my-4 mt-8 ">Companies</h3>
+      <table className="min-w-full bg-white shadow rounded-lg text-txt-black">
         <thead>
           <tr className="text-left">
             <th className="py-2 px-4 border-b">Company</th>
             <th className="py-2 px-4 border-b">Category</th>
-            <th className="py-2 px-4 border-b">Subcategory</th>
             <th className="py-2 px-4 border-b">Actions</th>
           </tr>
         </thead>
@@ -289,40 +262,35 @@ const CompanyRegister = () => {
                     />
                     <button
                       type="submit"
-                      className="bg-green-500 text-white py-1 px-2 rounded-lg hover:bg-green-600 ml-2"
+                      className="bg-green-500 text-txt-white py-1 px-2 rounded-lg hover:bg-green-600 ml-2"
                     >
                       Save
                     </button>
                     <button
                       type="button"
-                      className="bg-red-500 text-white py-1 px-2 rounded-lg hover:bg-red-600 ml-2"
+                      className="bg-red-500 text-txt-white py-1 px-2 rounded-lg hover:bg-red-600 ml-2"
                       onClick={() => setEditCompany(null)}
                     >
                       Cancel
                     </button>
                   </form>
                 ) : (
-                  <>
-                    {company.name}
-                    <button
-                      className="ml-2 text-blue-500 hover:underline"
-                      onClick={() => handleEditClick(company)}
-                    >
-                      Edit
-                    </button>
-                  </>
+                  <>{company.name}</>
                 )}
               </td>
               <td className="py-2 px-4 border-b">
                 {categories.find((cat) => cat.id === company.category)
                   ?.category_name || "N/A"}
               </td>
-              <td className="py-2 px-4 border-b">
-                {subcategories.find((sub) => sub.id === company.subcategory)
-                  ?.subcategory_name || "N/A"}
-              </td>
+
               <td className="py-2 px-4 border-b">
                 {/* Add buttons for Edit/Delete if necessary */}
+                <button
+                  className="ml-2 text-blue-500 hover:underline"
+                  onClick={() => handleEditClick(company)}
+                >
+                  Edit
+                </button>
               </td>
             </tr>
           ))}
@@ -330,9 +298,7 @@ const CompanyRegister = () => {
       </table>
 
       {/* Display Sales Representatives */}
-      <h3 className="text-xl font-bold mb-4 text-black">
-        Sales Representatives
-      </h3>
+      <h3 className="text-xl font-bold mb-4">Sales Representatives</h3>
       <table className="min-w-full bg-white shadow rounded-lg">
         <thead>
           <tr className="text-left">
@@ -343,7 +309,7 @@ const CompanyRegister = () => {
             <th className="py-2 px-4 border-b">Actions</th>
           </tr>
         </thead>
-        <tbody>
+        {/* <tbody>
           {companies
             .flatMap((company) => company.sales_representatives)
             .map((rep) => (
@@ -405,13 +371,13 @@ const CompanyRegister = () => {
                       </select>
                       <button
                         type="submit"
-                        className="bg-green-500 text-white py-1 px-2 rounded-lg hover:bg-green-600 ml-2"
+                        className="bg-green-500 text-txt-white py-1 px-2 rounded-lg hover:bg-green-600 ml-2"
                       >
                         Save
                       </button>
                       <button
                         type="button"
-                        className="bg-red-500 text-white py-1 px-2 rounded-lg hover:bg-red-600 ml-2"
+                        className="bg-red-500 text-txt-white py-1 px-2 rounded-lg hover:bg-red-600 ml-2"
                         onClick={() => setEditSalesRep(null)}
                       >
                         Cancel
@@ -436,11 +402,10 @@ const CompanyRegister = () => {
                     "N/A"}
                 </td>
                 <td className="py-2 px-4 border-b">
-                  {/* Add buttons for Edit/Delete if necessary */}
                 </td>
               </tr>
             ))}
-        </tbody>
+        </tbody> */}
       </table>
     </div>
   );

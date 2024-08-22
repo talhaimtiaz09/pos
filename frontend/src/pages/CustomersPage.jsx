@@ -40,11 +40,11 @@ const CustomersPage = () => {
 
   const getTabClass = (tab) =>
     `p-4 cursor-pointer ${
-      view === tab ? "bg-primary text-white" : " text-gray-200"
-    } border-b-2 flex items-center justify-between hover:bg-blue-600 transition`;
+      view === tab ? "bg-primary text-txt-white" : " text-gray-200"
+    } border-b-2 flex items-center justify-between hover:bg-primary-hover transition`;
 
   return (
-    <div className="min-h-screen text-white">
+    <div className="min-h-screen text-txt-white">
       <div className="flex w-full ">
         <div className="flex flex-col justify-center gap-x-4 w-80">
           <div

@@ -4,11 +4,18 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        black: {
+        bkg: {
           dark: "#222831",
           light: "#393E46",
+          white: "#EEEEEE",
         },
-        primary: "#F05454",
+
+        primary: "#38b000",
+        "primary-hover": "#2f9400",
+        "txt-white": "#F8F8FF",
+        "txt-black": "#2b2d42",
+        "azure-white": "#F0FFFF",
+        "ice-white": "#F0F8FF",
       },
     },
   },

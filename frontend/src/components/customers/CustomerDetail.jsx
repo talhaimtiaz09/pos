@@ -64,7 +64,7 @@ const CustomerDetail = ({ onBack }) => {
       <div className="mb-4">
         <button
           onClick={onBack}
-          className="px-4 py-2 bg-red-800 text-white rounded-lg shadow-md hover:bg-red-700 transition"
+          className="px-4 py-2 bg-red-800 text-txt-white rounded-lg shadow-md hover:bg-red-700 transition"
         >
           Back
         </button>
@@ -83,7 +83,7 @@ const CustomerDetail = ({ onBack }) => {
         />
         <button
           onClick={handleSearch}
-          className="ml-2 px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-500 transition"
+          className="ml-2 px-4 py-2 bg-primary-hover text-txt-white rounded-lg shadow-md hover:bg-primary transition"
         >
           Search
         </button>

@@ -73,27 +73,28 @@ const ProductUnit = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="w-2/3 mx-auto my-10">
-      <h2 className="text-2xl font-bold mb-6 text-black">Product Units</h2>
+    <div className="w-2/3 mx-10 my-10">
+      <div className="p-4 bg-ice-white rounded-md my-4">
+        <h2 className="text-2xl font-bold mb-6 text-primary">Product Units</h2>
 
-      {/* Add New Unit */}
-      <form onSubmit={handleNewUnit} className="mb-6 flex space-x-4">
-        <input
-          type="text"
-          placeholder="New unit name"
-          value={newUnit}
-          onChange={(e) => setNewUnit(e.target.value)}
-          className="flex-1 px-3 py-2 border rounded-lg bg-transparent border-2 border-slate-400"
-          required
-        />
-        <button
-          type="submit"
-          className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
-        >
-          Add Unit
-        </button>
-      </form>
-
+        {/* Add New Unit */}
+        <form onSubmit={handleNewUnit} className="mb-6 flex space-x-4">
+          <input
+            type="text"
+            placeholder="New unit name"
+            value={newUnit}
+            onChange={(e) => setNewUnit(e.target.value)}
+            className="flex-1 px-3 py-2 border rounded-lg bg-transparent border-2 border-slate-400"
+            required
+          />
+          <button
+            type="submit"
+            className="bg-primary text-txt-white py-2 px-4 rounded-lg hover:bg-primary-hover"
+          >
+            Add Unit
+          </button>
+        </form>
+      </div>
       {/* Display Units */}
       <table className="min-w-full bg-white shadow rounded-lg">
         <thead>
@@ -123,13 +124,13 @@ const ProductUnit = () => {
                       />
                       <button
                         type="submit"
-                        className="mt-2 bg-blue-500 text-white py-1 px-3 rounded-lg hover:bg-blue-600"
+                        className="mt-2 bg-primary text-txt-white py-1 px-3 rounded-lg hover:bg-primary-hover"
                       >
                         Save
                       </button>
                       <button
                         type="button"
-                        className="mt-2 ml-2 bg-gray-500 text-white py-1 px-3 rounded-lg hover:bg-gray-600"
+                        className="mt-2 ml-2 bg-gray-500 text-txt-white py-1 px-3 rounded-lg hover:bg-gray-600"
                         onClick={() => setEditUnit(null)}
                       >
                         Cancel

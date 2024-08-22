@@ -39,7 +39,9 @@ const CustomerCreateForm = () => {
         onSubmit={handleSubmit}
         className="bg-black-light p-8 rounded-lg a shadow-lg my-10 w-full"
       >
-        <h2 className="text-2xl font-bold mb-6 text-white">Add New Customer</h2>
+        <h2 className="text-2xl font-bold mb-6 text-txt-white">
+          Add New Customer
+        </h2>
         <div className="mb-4">
           <label className="block text-gray-200 font-bold mb-2" htmlFor="name">
             Name
@@ -49,7 +51,7 @@ const CustomerCreateForm = () => {
             id="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full px-3 py-2 border rounded-lg bg-transparent border-1 border-slate-100 text-white"
+            className="w-full px-3 py-2 border rounded-lg bg-transparent border-1 border-slate-100 text-txt-white"
             required
           />
         </div>
@@ -65,7 +67,7 @@ const CustomerCreateForm = () => {
             id="address"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
-            className="w-full px-3 py-2 border rounded-lg bg-transparent border-1 border-slate-100 text-white"
+            className="w-full px-3 py-2 border rounded-lg bg-transparent border-1 border-slate-100 text-txt-white"
             required
           />
         </div>
@@ -78,13 +80,13 @@ const CustomerCreateForm = () => {
             id="phone"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            className="w-full px-3 py-2 border rounded-lg bg-transparent border-1 border-slate-100 text-white"
+            className="w-full px-3 py-2 border rounded-lg bg-transparent border-1 border-slate-100 text-txt-white"
             required
           />
         </div>
         <button
           type="submit"
-          className="mt-10 bg-primary text-white font-bold py-2 px-4 rounded-lg hover:bg-teal-700"
+          className="mt-10 bg-primary text-txt-white font-bold py-2 px-4 rounded-lg hover:bg-teal-700"
         >
           Add Customer
         </button>

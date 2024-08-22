@@ -9,14 +9,25 @@ import {
   faFileInvoice,
 } from "@fortawesome/free-solid-svg-icons";
 import SidebarItem from "./SidebarItem";
+import { faInstalod } from "@fortawesome/free-brands-svg-icons";
 
 const Navbar = () => {
   return (
-    <nav className="bg-white text-slate-800 flex-col flex w-64 rounded-lg border border-gray-300 py-6 shadow-lg text-lg">
+    <nav className="bg-bkg-light text-txt-white flex-col flex w-64 border-r border-gray-300 py-6 shadow-lg text-lg fixed top-0 z-20 h-screen overflow-y-scroll">
       <SidebarItem
         title="Dashboard"
         icon={<FontAwesomeIcon icon={faTachometerAlt} />}
         links={[{ name: "Home", path: "/dashboard" }]}
+      />
+      <SidebarItem
+        title="Sales"
+        icon={<FontAwesomeIcon icon={faUsers} />}
+        links={[
+          { name: "Form", path: "/sales/form" },
+          { name: "Credit", path: "/sales/credit" },
+          { name: "Payment", path: "/sales/payment" },
+          { name: "Records", path: "/sales/record" },
+        ]}
       />
       <SidebarItem
         title="Customers"
@@ -30,8 +41,8 @@ const Navbar = () => {
         title="Inventory"
         icon={<FontAwesomeIcon icon={faBox} />}
         links={[
-          { name: "Add Inventory", path: "/inventory/add" },
-          { name: "List Inventory", path: "/inventory/list" },
+          { name: "Add Inventory", path: "/inventory/register" },
+          { name: "Locations", path: "/inventory/location" },
         ]}
       />
       <SidebarItem
@@ -42,6 +53,8 @@ const Navbar = () => {
           { name: "List Products", path: "/product/list" },
           { name: "Products Category", path: "/product/category" },
           { name: "Products UOM", path: "/product/unit" },
+          { name: "Batch", path: "/product/batch" },
+          { name: "Batch Details", path: "/product/batch-details" },
         ]}
       />
       <SidebarItem
@@ -53,11 +66,28 @@ const Navbar = () => {
         ]}
       />
       <SidebarItem
+        title="Stakeholder"
+        icon={<FontAwesomeIcon icon={faIndustry} />}
+        links={[
+          { name: "Register Stakeholder", path: "/stakeholder/register" },
+          { name: "Categories", path: "/stakeholder/category" },
+        ]}
+      />
+      <SidebarItem
         title="Invoices"
         icon={<FontAwesomeIcon icon={faFileInvoice} />}
         links={[
           { name: "Create Invoice", path: "/invoice/create" },
           { name: "List Invoices", path: "/invoice/list" },
+        ]}
+      />
+      <SidebarItem
+        title="Accounts"
+        icon={<FontAwesomeIcon icon={faFileInvoice} />}
+        links={[
+          { name: "Create Account", path: "/account/register" },
+          { name: "Categories", path: "/account/category" },
+          { name: "Account List", path: "/account/list" },
         ]}
       />
     </nav>

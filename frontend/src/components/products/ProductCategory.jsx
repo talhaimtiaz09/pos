@@ -117,59 +117,63 @@ const ProductCategory = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="w-2/3 mx-auto my-10">
-      <h2 className="text-2xl font-bold mb-6 text-black">Product Categories</h2>
+    <div className="w-2/3 mx-10 my-10">
+      <div className="p-4 rounded-md bg-ice-white my-4">
+        <h2 className="text-2xl font-bold mb-6 text-primary">
+          Product Categories
+        </h2>
 
-      {/* Add New Category */}
-      <form onSubmit={handleNewCategory} className="mb-6 flex space-x-4">
-        <input
-          type="text"
-          placeholder="New category name"
-          value={newCategory}
-          onChange={(e) => setNewCategory(e.target.value)}
-          className="flex-1 px-3 py-2 border rounded-lg bg-transparent border-2 border-slate-400"
-          required
-        />
-        <button
-          type="submit"
-          className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
-        >
-          Add Category
-        </button>
-      </form>
+        {/* Add New Category */}
+        <form onSubmit={handleNewCategory} className="mb-6 flex space-x-4">
+          <input
+            type="text"
+            placeholder="New category name"
+            value={newCategory}
+            onChange={(e) => setNewCategory(e.target.value)}
+            className="flex-1 px-3 py-2 border rounded-lg bg-transparent border-2 border-slate-400"
+            required
+          />
+          <button
+            type="submit"
+            className="bg-primary text-txt-white py-2 px-4 rounded-lg hover:bg-primary-hover"
+          >
+            Add Category
+          </button>
+        </form>
 
-      {/* Add New SubCategory */}
-      <form onSubmit={handleNewSubcategory} className="mb-6 flex space-x-4">
-        <input
-          type="text"
-          placeholder="New Subcategory name"
-          value={newSubcategory}
-          onChange={(e) => setNewSubcategory(e.target.value)}
-          className="flex-1 px-3 py-2 border rounded-lg bg-transparent border-2 border-slate-400"
-          required
-        />
-        <select
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          className="flex-1 px-3 py-2 border rounded-lg bg-transparent border-2 border-slate-400"
-          required
-        >
-          <option value="">Select Category</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.category_name}
-            </option>
-          ))}
-        </select>
-        <button
-          type="submit"
-          className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
-        >
-          Add Subcategory
-        </button>
-      </form>
+        {/* Add New SubCategory */}
+        <form onSubmit={handleNewSubcategory} className="mb-6 flex space-x-4">
+          <input
+            type="text"
+            placeholder="New Subcategory name"
+            value={newSubcategory}
+            onChange={(e) => setNewSubcategory(e.target.value)}
+            className="flex-1 px-3 py-2 border rounded-lg bg-transparent border-2 border-slate-400"
+            required
+          />
+          <select
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="flex-1 px-3 py-2 border rounded-lg bg-transparent border-2 border-slate-400"
+            required
+          >
+            <option value="">Select Category</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.category_name}
+              </option>
+            ))}
+          </select>
+          <button
+            type="submit"
+            className="bg-primary text-txt-white py-2 px-4 rounded-lg hover:bg-primary-hover"
+          >
+            Add Subcategory
+          </button>
+        </form>
+      </div>
 
       {/* Display Categories */}
-      <h3 className="text-xl font-bold mb-4 text-black">Categories</h3>
+      <h3 className="text-xl font-bold mb-4 text-txt-white">Categories</h3>
       <table className="min-w-full bg-white shadow rounded-lg">
         <thead>
           <tr className="text-left">
@@ -197,13 +201,13 @@ const ProductCategory = () => {
                     />
                     <button
                       type="submit"
-                      className="mt-2 bg-blue-500 text-white py-1 px-3 rounded-lg hover:bg-blue-600"
+                      className="mt-2 bg-primary text-txt-white py-1 px-3 rounded-lg hover:bg-primary-hover"
                     >
                       Save
                     </button>
                     <button
                       type="button"
-                      className="mt-2 ml-2 bg-gray-500 text-white py-1 px-3 rounded-lg hover:bg-gray-600"
+                      className="mt-2 ml-2 bg-gray-500 text-txt-white py-1 px-3 rounded-lg hover:bg-gray-600"
                       onClick={() => setEditCategory(null)}
                     >
                       Cancel
@@ -227,7 +231,9 @@ const ProductCategory = () => {
       </table>
 
       {/* Display Subcategories */}
-      <h3 className="text-xl font-bold mb-4 mt-6 text-black">Subcategories</h3>
+      <h3 className="text-xl font-bold mb-4 mt-6 text-txt-white">
+        Subcategories
+      </h3>
       <table className="min-w-full bg-white shadow rounded-lg">
         <thead>
           <tr className="text-left">
@@ -256,13 +262,13 @@ const ProductCategory = () => {
                     />
                     <button
                       type="submit"
-                      className="mt-2 bg-blue-500 text-white py-1 px-3 rounded-lg hover:bg-blue-600"
+                      className="mt-2 bg-primary text-txt-white py-1 px-3 rounded-lg hover:bg-primary-hover"
                     >
                       Save
                     </button>
                     <button
                       type="button"
-                      className="mt-2 ml-2 bg-gray-500 text-white py-1 px-3 rounded-lg hover:bg-gray-600"
+                      className="mt-2 ml-2 bg-gray-500 text-txt-white py-1 px-3 rounded-lg hover:bg-gray-600"
                       onClick={() => setEditSubcategory(null)}
                     >
                       Cancel

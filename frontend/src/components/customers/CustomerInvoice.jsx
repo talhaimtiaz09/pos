@@ -52,7 +52,7 @@ const CustomerInvoice = ({ onBack }) => {
       <div className="mb-4">
         <button
           onClick={onBack}
-          className="px-4 py-2 bg-red-800 text-white rounded-lg shadow-md hover:bg-red-700 transition"
+          className="px-4 py-2 bg-red-800 text-txt-white rounded-lg shadow-md hover:bg-red-700 transition"
         >
           Back
         </button>
@@ -71,7 +71,7 @@ const CustomerInvoice = ({ onBack }) => {
         />
         <button
           onClick={handleSearch}
-          className="ml-2 px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-500 transition"
+          className="ml-2 px-4 py-2 bg-primary-hover text-txt-white rounded-lg shadow-md hover:bg-primary transition"
         >
           Search
         </button>
@@ -121,7 +121,7 @@ const CustomerInvoice = ({ onBack }) => {
       <div className="mb-4">
         <button
           onClick={handleSearch}
-          className="px-4 py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-500 transition"
+          className="px-4 py-2 bg-green-600 text-txt-white rounded-lg shadow-md hover:bg-green-500 transition"
         >
           Filter Records
         </button>
@@ -129,7 +129,7 @@ const CustomerInvoice = ({ onBack }) => {
       <div className="mb-4">
         <button
           onClick={() => (window.location.href = getInvoiceURL())}
-          className="px-4 py-2 bg-yellow-600 text-white rounded-lg shadow-md hover:bg-yellow-500 transition"
+          className="px-4 py-2 bg-yellow-600 text-txt-white rounded-lg shadow-md hover:bg-yellow-500 transition"
         >
           Get Invoice
         </button>
