@@ -135,7 +135,7 @@ CREATE TABLE IF NOT EXISTS public.product_batches (
 -- Create batch details table
 CREATE TABLE IF NOT EXISTS public.batch_details (
     id serial PRIMARY KEY,
-    batch_id integer NOT NULL,
+    batch_id integer NOT NULL UNIQUE,
     batch_number varchar(50) NOT NULL UNIQUE,
     manufacture_date date DEFAULT NULL,
     expiry_date date,
