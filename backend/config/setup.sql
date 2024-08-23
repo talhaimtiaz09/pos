@@ -421,6 +421,11 @@ INSERT INTO public.transactions (amount, transaction_type, from_account_id, to_a
 (500, 'Transfer', 5, 1);
 
 
+---------------------------------------------------------------
+-- Trigger for sale records
+---------------------------------------------------------------
+
+
 CREATE OR REPLACE FUNCTION update_batch_before_sale() 
 RETURNS TRIGGER AS $$
 BEGIN
@@ -450,6 +455,9 @@ BEFORE INSERT ON sales
 FOR EACH ROW
 EXECUTE FUNCTION update_batch_before_sale();
 
+---------------------------------------------------------------
+-- Trigger for account records
+---------------------------------------------------------------
 
 
 CREATE OR REPLACE FUNCTION increment_account_balance_after_sale() 
@@ -468,6 +476,73 @@ CREATE TRIGGER after_sale_insert
 AFTER INSERT ON sales
 FOR EACH ROW
 EXECUTE FUNCTION increment_account_balance_after_sale();
+
+---------------------------------------------------------------
+-- Trigger for inventory records
+---------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION record_inventory_out_after_sale()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Insert an "OUT" inventory record when a sale is made
+    INSERT INTO inventory_records (batch_id, quantity, record_type, inventory_id)
+    VALUES (NEW.batch_id, NEW.quantity, 'OUT', (SELECT inventory_id FROM product_batches WHERE id = NEW.batch_id));
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER after_sale_insert_inventory
+AFTER INSERT ON sales
+FOR EACH ROW
+EXECUTE FUNCTION record_inventory_out_after_sale();
+
+
+
+
+CREATE OR REPLACE FUNCTION record_inventory_in_after_batch_registration()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Insert an "IN" inventory record when a new batch is registered
+    INSERT INTO inventory_records (batch_id, quantity, record_type, inventory_id)
+    VALUES (NEW.id, NEW.quantity, 'IN', NEW.inventory_id);
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER after_batch_insert_inventory
+AFTER INSERT ON product_batches
+FOR EACH ROW
+EXECUTE FUNCTION record_inventory_in_after_batch_registration();
+
+
+
+CREATE OR REPLACE FUNCTION record_inventory_adjustment_after_batch_update()
+RETURNS TRIGGER AS $$
+DECLARE
+    old_quantity numeric(10, 2);
+BEGIN
+    old_quantity := (SELECT quantity FROM product_batches WHERE id = NEW.id);
+
+    IF NEW.quantity > old_quantity THEN
+        -- Insert an "IN" inventory record if the quantity increased
+        INSERT INTO inventory_records (batch_id, quantity, record_type, inventory_id)
+        VALUES (NEW.id, NEW.quantity - old_quantity, 'IN', NEW.inventory_id);
+    ELSIF NEW.quantity < old_quantity THEN
+        -- Insert an "OUT" inventory record if the quantity decreased
+        INSERT INTO inventory_records (batch_id, quantity, record_type, inventory_id)
+        VALUES (NEW.id, old_quantity - NEW.quantity, 'OUT', NEW.inventory_id);
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER after_batch_update_inventory
+AFTER UPDATE ON product_batches
+FOR EACH ROW
+EXECUTE FUNCTION record_inventory_adjustment_after_batch_update();
 
 
 COMMIT;
