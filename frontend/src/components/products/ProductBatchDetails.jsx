@@ -139,7 +139,7 @@ const ProductBatchDetails = ({ batch_id }) => {
       {error && <p className="text-red-500 mb-4">{error}</p>}
 
       {/* Table of batch details */}
-      <table className="table-auto w-full border-collapse">
+      {/* <table className="table-auto w-full border-collapse">
         <thead>
           <tr>
             <th className="border p-2">Batch Number</th>
@@ -171,7 +171,7 @@ const ProductBatchDetails = ({ batch_id }) => {
             </tr>
           ))}
         </tbody>
-      </table>
+      </table> */}
     </div>
   );
 };

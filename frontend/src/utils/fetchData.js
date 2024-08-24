@@ -9,7 +9,12 @@ const fetchData = async (url, method = "GET", data = null, headers = {}) => {
       data,
       headers,
     });
-    console.log("Response (fetch data function) : ", response.data);
+
+    console.log(
+      "Response (fetch data function) : ",
+      response.data.data,
+      response.data.message
+    );
     return response.data;
   } catch (error) {
     console.error("Error fetching data:", error);

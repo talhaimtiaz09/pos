@@ -6,6 +6,8 @@ import {
   faTrash,
   faPlus,
   faInfoCircle,
+  faEye,
+  faEyeSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import ProductBatchDetails from "./ProductBatchDetails";
 
@@ -15,6 +17,7 @@ const ProductBatch = () => {
   const [products, setProducts] = useState([]);
   const [locations, setLocations] = useState([]);
   const [inventories, setInventories] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [selectedBatchDetails, setSelectedBatchDetails] = useState(null);
   const [newBatch, setNewBatch] = useState({
     quantity: "",
@@ -26,6 +29,10 @@ const ProductBatch = () => {
   });
   const [editingBatch, setEditingBatch] = useState(null);
   const [error, setError] = useState(null);
+  const [showTrash, setShowTrash] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [showActiveOnly, setShowActiveOnly] = useState(true);
 
   useEffect(() => {
     const getProductBatches = async () => {
@@ -73,11 +80,21 @@ const ProductBatch = () => {
       }
     };
 
+    const getCategories = async () => {
+      try {
+        const response = await fetchData("product/category", "GET");
+        setCategories(response.data);
+      } catch (err) {
+        setError("Failed to fetch categories.");
+      }
+    };
+
     getBatchDetails();
     getProductBatches();
     getProducts();
     getLocations();
     getInventories();
+    getCategories();
   }, []);
 
   const handleCreateBatch = async () => {
@@ -132,11 +149,57 @@ const ProductBatch = () => {
     }
   };
 
+  const filteredBatches = productBatches.filter(
+    (batch) =>
+      (selectedProduct ? batch.product_id === selectedProduct : true) &&
+      (selectedCategory
+        ? products.find((p) => p.id === batch.product_id)?.category_id ===
+          selectedCategory
+        : true) &&
+      (showActiveOnly ? batch.is_active : true)
+  );
+
   return (
     <div className="max-w-4xl mx-auto p-4">
       <h2 className="text-2xl font-semibold mb-4">Product Batches</h2>
 
       {error && <p className="text-red-500">{error}</p>}
+
+      {/* Filters */}
+      <div className="mb-4 flex gap-4 items-center">
+        <select
+          className="border p-2 rounded-md flex-1"
+          value={selectedProduct}
+          onChange={(e) => setSelectedProduct(e.target.value)}
+        >
+          <option value="">Select Product</option>
+          {products.map((product) => (
+            <option key={product.id} value={product.id}>
+              {product.name}
+            </option>
+          ))}
+        </select>
+        <select
+          className="border p-2 rounded-md flex-1"
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+        >
+          <option value="">Select Category</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </select>
+        <button
+          className={`px-4 py-2 rounded-md flex items-center gap-2 ${
+            showActiveOnly ? "bg-primary text-white" : "bg-gray-200"
+          }`}
+          onClick={() => setShowActiveOnly(!showActiveOnly)}
+        >
+          {showActiveOnly ? "Show All Batches" : "Show Active Only"}
+        </button>
+      </div>
 
       {/* Form to add or edit a batch */}
       <div className="mb-4 flex flex-wrap gap-4 items-center">
@@ -198,7 +261,7 @@ const ProductBatch = () => {
           <option value="">Select Location</option>
           {locations.map((location) => (
             <option key={location.id} value={location.id}>
-              {location.location_name}
+              {location.name}
             </option>
           ))}
         </select>
@@ -219,95 +282,98 @@ const ProductBatch = () => {
           <option value="">Select Inventory</option>
           {inventories.map((inventory) => (
             <option key={inventory.id} value={inventory.id}>
-              {inventory.inventory_name}
+              {inventory.name}
             </option>
           ))}
         </select>
+
+        {editingBatch ? (
+          <button
+            className="px-4 py-2 bg-primary text-white rounded-md"
+            onClick={handleUpdateBatch}
+          >
+            Update Batch
+          </button>
+        ) : (
+          <button
+            className="px-4 py-2 bg-primary text-white rounded-md"
+            onClick={handleCreateBatch}
+          >
+            Add Batch
+          </button>
+        )}
+
         <button
-          className="bg-primary text-txt-white px-4 py-2 rounded-md flex items-center gap-2"
-          onClick={editingBatch ? handleUpdateBatch : handleCreateBatch}
+          className={`px-4 py-2 rounded-md flex items-center gap-2 ${
+            showTrash ? "bg-red-600 text-white" : "bg-gray-200"
+          }`}
+          onClick={() => setShowTrash(!showTrash)}
         >
-          <FontAwesomeIcon icon={editingBatch ? faEdit : faPlus} />
-          {editingBatch ? "Update" : "Add"}
+          <FontAwesomeIcon icon={showTrash ? faEyeSlash : faEye} />
+          {showTrash ? "Hide Trash" : "Show Trash"}
         </button>
       </div>
 
-      <div className="space-y-4">
-        {productBatches.map((batch) => (
-          <div key={batch.id} className="border p-4 rounded-md bg-gray-100">
-            <div className="flex justify-between items-center">
-              <div>
-                <p>
-                  <strong>Quantity:</strong> {batch.quantity || "N/A"}
-                </p>
-                <p>
-                  <strong>Purchase Price:</strong>{" "}
-                  {batch.purchase_price || "N/A"}
-                </p>
-                <p>
-                  <strong>Product:</strong>{" "}
-                  {products.find((p) => p.id === batch.product_id)?.name ||
-                    "N/A"}
-                </p>
-                <p>
-                  <strong>Location:</strong>{" "}
-                  {locations.find((l) => l.id === batch.location_id)
-                    ?.location_name || "N/A"}
-                </p>
-                <p>
-                  <strong>Inventory:</strong>{" "}
-                  {inventories.find((i) => i.id === batch.inventory_id)
-                    ?.inventory_name || "N/A"}
-                </p>
-                <p>
-                  <strong>Active:</strong> {batch.is_active ? "Yes" : "No"}
-                </p>
-                {batchDetails
-                  .filter((detail) => detail.batch_id === batch.id)
-                  .map((batch) => (
-                    <div>
-                      <p>
-                        <strong>Batch No. :</strong> {batch.batch_number}
-                      </p>
-                      <p>
-                        <strong>MFG data :</strong>{" "}
-                        {batch.manufacture_date || "N/A"}
-                      </p>
-                      <p>
-                        <strong>EXP data :</strong> {batch.expiry_date || "N/A"}
-                      </p>
-                    </div>
-                  ))}
-              </div>
-              <div className="flex gap-2">
+      {/* Table to show product batches */}
+      <table className="min-w-full bg-white rounded-md shadow-md">
+        <thead>
+          <tr>
+            <th className="p-2 border-b">Quantity</th>
+            <th className="p-2 border-b">Purchase Price</th>
+            <th className="p-2 border-b">Product</th>
+            <th className="p-2 border-b">Location</th>
+            <th className="p-2 border-b">Inventory</th>
+            <th className="p-2 border-b">Status</th>
+            <th className="p-2 border-b">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredBatches.map((batch) => (
+            <tr key={batch.id}>
+              <td className="p-2 border-b">{batch.quantity}</td>
+              <td className="p-2 border-b">{batch.purchase_price}</td>
+              <td className="p-2 border-b">
+                {products.find((p) => p.id === batch.product_id)?.name}
+              </td>
+              <td className="p-2 border-b">{batch.location_name}</td>
+              <td className="p-2 border-b">{batch.inventory_name}</td>
+              <td className="p-2 border-b">
+                {batch.is_active ? "Active" : "Inactive"}
+              </td>
+              <td className="p-2 border-b flex gap-2">
                 <button
-                  className="bg-yellow-500 text-txt-white px-3 py-1 rounded-md"
+                  className="text-blue-500 hover:underline"
                   onClick={() => setEditingBatch(batch)}
                 >
                   <FontAwesomeIcon icon={faEdit} />
                 </button>
+                {showTrash && (
+                  <button
+                    className="text-red-500 hover:underline"
+                    onClick={() => handleDeleteBatch(batch.id)}
+                  >
+                    <FontAwesomeIcon icon={faTrash} />
+                  </button>
+                )}
                 <button
-                  className="bg-red-500 text-txt-white px-3 py-1 rounded-md"
-                  onClick={() => handleDeleteBatch(batch.id)}
-                >
-                  <FontAwesomeIcon icon={faTrash} />
-                </button>
-                <button
-                  className="bg-green-500 text-txt-white px-3 py-1 rounded-md"
+                  className="text-green-500 hover:underline"
                   onClick={() => toggleBatchDetails(batch.id)}
                 >
-                  <FontAwesomeIcon icon={faInfoCircle} />
+                  <FontAwesomeIcon
+                    icon={
+                      selectedBatchDetails === batch.id ? faInfoCircle : faPlus
+                    }
+                  />
                 </button>
-              </div>
-            </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-            {/* Render ProductBatchDetails for the selected batch */}
-            {selectedBatchDetails === batch.id && (
-              <ProductBatchDetails batch_id={batch.id} />
-            )}
-          </div>
-        ))}
-      </div>
+      {selectedBatchDetails && (
+        <ProductBatchDetails batchId={selectedBatchDetails} />
+      )}
     </div>
   );
 };

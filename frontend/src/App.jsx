@@ -34,6 +34,8 @@ import CreditSalesForm from "./components/sales/creditSalesForm";
 import CreditPaymentForm from "./components/sales/creditPaymentForm";
 import SalesRecord from "./components/sales/SalesRecord";
 import AccountList from "./components/account/AccountList";
+import InventoryRecords from "./components/inventory/InventoryRecords";
+import InventoryStock from "./components/inventory/InventoryStock";
 const App = () => (
   <BrowserRouter>
     <Navbar />
@@ -79,6 +81,8 @@ const App = () => (
         <Route path="/inventory">
           <Route path="register" element={<Inventory />} />
           <Route path="location" element={<InventoryLocations />} />
+          <Route path="record" element={<InventoryRecords />} />
+          <Route path="stock" element={<InventoryStock />} />
         </Route>
 
         <Route path="/sales">
