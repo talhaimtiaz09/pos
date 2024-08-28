@@ -147,12 +147,15 @@ CREATE TABLE IF NOT EXISTS public.inventory_records (
     id serial PRIMARY KEY,
     batch_id integer NOT NULL,
     quantity numeric(10, 2) NOT NULL CHECK (quantity > 0),
-    record_type varchar(50) NOT NULL CHECK (record_type IN ('IN', 'OUT', 'ADJUSTMENT')),
+    record_type varchar(50) NOT NULL CHECK (record_type IN ('IN', 'OUT', 'ADJUSTMENT','DAMAGED')),
     record_date timestamp DEFAULT CURRENT_TIMESTAMP,
     inventory_id integer,
     FOREIGN KEY (batch_id) REFERENCES public.product_batches (id),
     FOREIGN KEY (inventory_id) REFERENCES public.inventory (id)
 );
+
+
+
 
 
 -- Create accounts table
@@ -237,7 +240,7 @@ CREATE TABLE IF NOT EXISTS public.transactions (
     id serial PRIMARY KEY,
     date timestamp DEFAULT CURRENT_TIMESTAMP,
     amount numeric(10, 2) NOT NULL,
-    transaction_type varchar(50) NOT NULL,
+    transaction_type varchar(50) NOT NULL CHECK (transaction_type IN ('TRANSFER', 'DEPOSIT','WITHDRAWAL')),
     from_account_id integer NOT NULL,
     to_account_id integer NOT NULL,
     FOREIGN KEY (from_account_id) REFERENCES public.accounts (id),
@@ -248,6 +251,33 @@ CREATE TABLE IF NOT EXISTS public.transactions (
 
 
 
+
+-- Create damages table
+CREATE TABLE IF NOT EXISTS public.product_damages (
+    id serial PRIMARY KEY,
+    quantity numeric(10, 2) NOT NULL,
+    damage_date date DEFAULT CURRENT_TIMESTAMP,
+    product_id integer,
+    FOREIGN KEY (product_id) REFERENCES public.products (id)
+);
+
+-- Create expense categories table
+CREATE TABLE IF NOT EXISTS public.expense_categories (
+    id serial PRIMARY KEY,
+    name varchar(50) NOT NULL UNIQUE
+);
+
+-- Create expenses table
+CREATE TABLE IF NOT EXISTS public.expenses (
+    id serial PRIMARY KEY,
+    date timestamp DEFAULT CURRENT_TIMESTAMP,
+    amount numeric(10, 2) NOT NULL,
+    category_id integer,
+    account_id integer,
+    description text,
+    FOREIGN KEY (category_id) REFERENCES public.expense_categories (id),
+    FOREIGN KEY (account_id) REFERENCES public.accounts (id)
+);
 
 
 
@@ -414,11 +444,11 @@ INSERT INTO public.credit_payment (sale_id, amount_left, amount_paid, account_id
 
 -- Insert data into transactions
 INSERT INTO public.transactions (amount, transaction_type, from_account_id, to_account_id) VALUES
-(50000, 'Transfer', 1, 2),
-(10000, 'Transfer', 2, 3),
-(15000, 'Transfer', 3, 4),
-(3000, 'Transfer', 4, 5),
-(500, 'Transfer', 5, 1);
+(50000, 'TRANSFER', 1, 2),
+(10000, 'TRANSFER', 2, 3),
+(15000, 'TRANSFER', 3, 4),
+(3000, 'DEPOSIT', 5, 5),
+(500, 'WITHDRAWAL', 1, 1);
 
 
 ---------------------------------------------------------------
@@ -543,6 +573,68 @@ CREATE TRIGGER after_batch_update_inventory
 AFTER UPDATE ON product_batches
 FOR EACH ROW
 EXECUTE FUNCTION record_inventory_adjustment_after_batch_update();
+
+
+
+--------------------------------------------
+-- Trigger for transactions
+--------------------------------------------
+-- Create a function to update account balances based on transaction type
+CREATE OR REPLACE FUNCTION update_account_balance() 
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.transaction_type = 'DEPOSIT' THEN
+        UPDATE public.accounts
+        SET balance = balance + NEW.amount
+        WHERE id = NEW.to_account_id;
+    ELSIF NEW.transaction_type = 'WITHDRAWAL' THEN
+        UPDATE public.accounts
+        SET balance = balance - NEW.amount
+        WHERE id = NEW.from_account_id;
+    ELSIF NEW.transaction_type = 'TRANSFER' THEN
+        UPDATE public.accounts
+        SET balance = balance - NEW.amount
+        WHERE id = NEW.from_account_id;
+
+        UPDATE public.accounts
+        SET balance = balance + NEW.amount
+        WHERE id = NEW.to_account_id;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create a trigger to invoke the function after an insert on the transactions table
+CREATE TRIGGER update_balance_trigger
+AFTER INSERT ON public.transactions
+FOR EACH ROW
+EXECUTE FUNCTION update_account_balance();
+
+
+
+
+
+------------------------------------------------------
+-- Damage log
+------------------------------------------------------
+-- Function to log inventory record as 'DAMAGED' when a product damage occurs
+CREATE OR REPLACE FUNCTION log_inventory_damage()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Insert into inventory_records with record_type 'DAMAGED'
+    INSERT INTO inventory_records (batch_id, quantity, record_type, inventory_id)
+    VALUES (NEW.product_id, NEW.quantity, 'DAMAGED', NULL);
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger that calls the function after insert on product_damages
+CREATE TRIGGER after_product_damage_insert
+AFTER INSERT ON product_damages
+FOR EACH ROW
+EXECUTE FUNCTION log_inventory_damage();
 
 
 COMMIT;

@@ -1,12 +1,20 @@
 const express = require("express");
 const router = express.Router();
 const productController = require("./productController");
+const productDamagesController = require("./productDamagesController");
 
 // Function to log request body (can be used for debugging)
 function requestSeeker(req, res, next) {
   console.log("req.body", req.body);
   next(); // Call next to proceed to the next middleware or route handler
 }
+
+// Damages route
+router.get("/damages", productDamagesController.renderAllDamages);
+router.get("/damages/:id", productDamagesController.renderDamageById);
+router.post("/damages", productDamagesController.createNewDamage);
+router.put("/damages/:id", productDamagesController.updateDamage);
+router.delete("/damages/:id", productDamagesController.deleteDamage);
 
 // Category Routes
 router.get("/category", productController.renderAllCategories);
