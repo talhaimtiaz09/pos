@@ -36,6 +36,7 @@ import SalesRecord from "./components/sales/SalesRecord";
 import AccountList from "./components/account/AccountList";
 import InventoryRecords from "./components/inventory/InventoryRecords";
 import InventoryStock from "./components/inventory/InventoryStock";
+import Transactions from "./components/account/Transaction";
 const App = () => (
   <BrowserRouter>
     <Navbar />
@@ -66,6 +67,7 @@ const App = () => (
           <Route path="register" element={<AccountRegiser />} />
           <Route path="list" element={<AccountList />} />
           <Route path="category" element={<AccountCategory />} />
+          <Route path="transactions" element={<Transactions />} />
         </Route>
 
         <Route path="/company">
