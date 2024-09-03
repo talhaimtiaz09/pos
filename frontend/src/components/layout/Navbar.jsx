@@ -46,7 +46,7 @@ const Navbar = () => {
     <>
       {/* Hamburger Icon */}
       <div
-        className="absolute top-4 left-4 cursor-pointer z-30  text-white"
+        className="absolute cursor-pointer z-30  text-white bg-bkg-dark p-4 -mt-10  w-60"
         onClick={toggleSidebar}
       >
         <FontAwesomeIcon icon={faBars} size="lg" />

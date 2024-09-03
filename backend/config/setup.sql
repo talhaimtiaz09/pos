@@ -1,9 +1,10 @@
 BEGIN;
 
--- -- Drop schema and all tables if they exist
--- DROP SCHEMA IF EXISTS public CASCADE;
--- CREATE SCHEMA IF NOT EXISTS public;
+-- Drop all tables if they exist
+DROP SCHEMA IF EXISTS public CASCADE;
 
+-- Recreate the public schema
+CREATE SCHEMA IF NOT EXISTS public;
 -- Drop tables if they exist
 DROP TABLE IF EXISTS public.accounts CASCADE;
 DROP TABLE IF EXISTS public.account_categories CASCADE;
