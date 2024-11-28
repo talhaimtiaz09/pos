@@ -76,9 +76,12 @@ const CompanyRegister = () => {
 
   const handleEditCompany = async (e) => {
     e.preventDefault();
+
+    console.log("editCompany", editCompany);
     try {
       const response = await fetchData(`/company/${editCompany.id}`, "PUT", {
         name: editCompany.name,
+        category: editCompany.category,
       });
       setCompanies(
         companies.map((company) =>
@@ -173,12 +176,12 @@ const CompanyRegister = () => {
         </button>
       </form>
 
-      <h2 className="text-2xl font-bold mb-6 ">
+      {/* <h2 className="text-2xl font-bold mb-6 ">
         Register Sales Representative
-      </h2>
+      </h2> */}
 
       {/* Add New Sales Rep */}
-      <form onSubmit={handleNewSalesRep} className="space-y-4">
+      {/* <form onSubmit={handleNewSalesRep} className="space-y-4">
         <input
           type="text"
           name="name"
@@ -233,7 +236,7 @@ const CompanyRegister = () => {
         >
           Add Sales Rep
         </button>
-      </form>
+      </form> */}
 
       {/* Display Companies */}
       <h3 className="text-xl font-bold my-4 mt-8 ">Companies</h3>
@@ -260,6 +263,26 @@ const CompanyRegister = () => {
                       className="w-full px-3 py-2 border rounded-lg bg-transparent border-2 border-slate-400"
                       required
                     />
+                    <select
+                      name="category"
+                      value={editCompany.category}
+                      onChange={(e) =>
+                        setEditCompany({
+                          ...editCompany,
+                          category: e.target.value,
+                        })
+                      }
+                      className="w-full px-3 py-2 border rounded-lg bg-transparent border-2 border-slate-400"
+                      required
+                    >
+                      <option value="">Select Category</option>
+                      {categories.map((category) => (
+                        <option key={category.id} value={category.id}>
+                          {category.category_name}
+                        </option>
+                      ))}
+                    </select>
+
                     <button
                       type="submit"
                       className="bg-green-500 text-txt-white py-1 px-2 rounded-lg hover:bg-green-600 ml-2"
@@ -298,6 +321,7 @@ const CompanyRegister = () => {
       </table>
 
       {/* Display Sales Representatives */}
+      {/* 
       <h3 className="text-xl font-bold mb-4">Sales Representatives</h3>
       <table className="min-w-full bg-white shadow rounded-lg">
         <thead>
@@ -309,7 +333,7 @@ const CompanyRegister = () => {
             <th className="py-2 px-4 border-b">Actions</th>
           </tr>
         </thead>
-        {/* <tbody>
+        <tbody>
           {companies
             .flatMap((company) => company.sales_representatives)
             .map((rep) => (
@@ -405,8 +429,9 @@ const CompanyRegister = () => {
                 </td>
               </tr>
             ))}
-        </tbody> */}
+        </tbody> 
       </table>
+        */}
     </div>
   );
 };

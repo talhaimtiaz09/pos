@@ -46,25 +46,25 @@ const queries = {
     WHERE id = $6 RETURNING *`,
   removeBooking: "DELETE FROM company_bookings WHERE id = $1",
 
-  // Company sales representatives queries
-  getAllSalesReps: `
-    SELECT csr.*, c.name AS company_name
-    FROM company_sales_reps csr
-    LEFT JOIN companies c ON csr.company_id = c.id
-    ORDER BY csr.name`,
-  getSalesRepById: `
-    SELECT csr.*, c.name AS company_name
-    FROM company_sales_reps csr
-    LEFT JOIN companies c ON csr.company_id = c.id
-    WHERE csr.id = $1`,
-  createSalesRep: `
-    INSERT INTO company_sales_reps (name, contact, address, company_id)
-    VALUES ($1, $2, $3, $4) RETURNING *`,
-  updateSalesRep: `
-    UPDATE company_sales_reps
-    SET name = $1, contact = $2, address = $3, company_id = $4
-    WHERE id = $5 RETURNING *`,
-  removeSalesRep: "DELETE FROM company_sales_reps WHERE id = $1",
+  // // Company sales representatives queries
+  // getAllSalesReps: `
+  //   SELECT csr.*, c.name AS company_name
+  //   FROM company_sales_reps csr
+  //   LEFT JOIN companies c ON csr.company_id = c.id
+  //   ORDER BY csr.name`,
+  // getSalesRepById: `
+  //   SELECT csr.*, c.name AS company_name
+  //   FROM company_sales_reps csr
+  //   LEFT JOIN companies c ON csr.company_id = c.id
+  //   WHERE csr.id = $1`,
+  // createSalesRep: `
+  //   INSERT INTO company_sales_reps (name, contact, address, company_id)
+  //   VALUES ($1, $2, $3, $4) RETURNING *`,
+  // updateSalesRep: `
+  //   UPDATE company_sales_reps
+  //   SET name = $1, contact = $2, address = $3, company_id = $4
+  //   WHERE id = $5 RETURNING *`,
+  // removeSalesRep: "DELETE FROM company_sales_reps WHERE id = $1",
 };
 
 // Company functions
@@ -195,69 +195,69 @@ const removeBooking = async (id) => {
   }
 };
 
-// Sales Representative functions
-const getAllSalesReps = async () => {
-  try {
-    console.log("Fetching all sales representatives");
-    const result = await pool.query(queries.getAllSalesReps);
-    return result.rows;
-  } catch (error) {
-    console.error("Error fetching all sales representatives:", error);
-    throw error;
-  }
-};
+// // Sales Representative functions
+// const getAllSalesReps = async () => {
+//   try {
+//     console.log("Fetching all sales representatives");
+//     const result = await pool.query(queries.getAllSalesReps);
+//     return result.rows;
+//   } catch (error) {
+//     console.error("Error fetching all sales representatives:", error);
+//     throw error;
+//   }
+// };
 
-const getSalesRepById = async (id) => {
-  try {
-    const result = await pool.query(queries.getSalesRepById, [id]);
-    return result.rows[0];
-  } catch (error) {
-    console.error(`Error fetching sales representative by ID (${id}):`, error);
-    throw error;
-  }
-};
+// const getSalesRepById = async (id) => {
+//   try {
+//     const result = await pool.query(queries.getSalesRepById, [id]);
+//     return result.rows[0];
+//   } catch (error) {
+//     console.error(`Error fetching sales representative by ID (${id}):`, error);
+//     throw error;
+//   }
+// };
 
-const createSalesRep = async (salesRep) => {
-  const { name, contact, address, company_id } = salesRep;
-  try {
-    const result = await pool.query(queries.createSalesRep, [
-      name,
-      contact,
-      address,
-      company_id,
-    ]);
-    return result.rows[0];
-  } catch (error) {
-    console.error("Error creating new sales representative:", error);
-    throw error;
-  }
-};
+// const createSalesRep = async (salesRep) => {
+//   const { name, contact, address, company_id } = salesRep;
+//   try {
+//     const result = await pool.query(queries.createSalesRep, [
+//       name,
+//       contact,
+//       address,
+//       company_id,
+//     ]);
+//     return result.rows[0];
+//   } catch (error) {
+//     console.error("Error creating new sales representative:", error);
+//     throw error;
+//   }
+// };
 
-const updateSalesRep = async (id, salesRep) => {
-  const { name, contact, address, company_id } = salesRep;
-  try {
-    const result = await pool.query(queries.updateSalesRep, [
-      name,
-      contact,
-      address,
-      company_id,
-      id,
-    ]);
-    return result.rows[0];
-  } catch (error) {
-    console.error(`Error updating sales representative (${id}):`, error);
-    throw error;
-  }
-};
+// const updateSalesRep = async (id, salesRep) => {
+//   const { name, contact, address, company_id } = salesRep;
+//   try {
+//     const result = await pool.query(queries.updateSalesRep, [
+//       name,
+//       contact,
+//       address,
+//       company_id,
+//       id,
+//     ]);
+//     return result.rows[0];
+//   } catch (error) {
+//     console.error(`Error updating sales representative (${id}):`, error);
+//     throw error;
+//   }
+// };
 
-const removeSalesRep = async (id) => {
-  try {
-    await pool.query(queries.removeSalesRep, [id]);
-  } catch (error) {
-    console.error(`Error deleting sales representative (${id}):`, error);
-    throw error;
-  }
-};
+// const removeSalesRep = async (id) => {
+//   try {
+//     await pool.query(queries.removeSalesRep, [id]);
+//   } catch (error) {
+//     console.error(`Error deleting sales representative (${id}):`, error);
+//     throw error;
+//   }
+// };
 
 module.exports = {
   // Company functions
@@ -275,9 +275,9 @@ module.exports = {
   removeBooking,
 
   // Sales Representative functions
-  getAllSalesReps,
-  getSalesRepById,
-  createSalesRep,
-  updateSalesRep,
-  removeSalesRep,
+  // getAllSalesReps,
+  // getSalesRepById,
+  // createSalesRep,
+  // updateSalesRep,
+  // removeSalesRep,
 };

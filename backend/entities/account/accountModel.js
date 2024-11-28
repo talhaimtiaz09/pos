@@ -16,11 +16,11 @@ const queries = {
     LEFT JOIN stakeholder s ON a.owner_id = s.id
     WHERE a.id = $1`,
   createAccount: `
-    INSERT INTO accounts (name, category, min_limit, max_limit, balance, owner_id)
-    VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+    INSERT INTO accounts (name, category,  balance, owner_id)
+    VALUES ($1, $2, $3, $4) RETURNING *`,
   updateAccount: `
     UPDATE accounts
-    SET name = $1, category = $2, min_limit = $3, max_limit = $4, balance = $5, owner_id = $6
+    SET name = $1, category = $2,  balance = $5, owner_id = $6
     WHERE id = $7 RETURNING *`,
   removeAccount: "DELETE FROM accounts WHERE id = $1",
 
@@ -64,8 +64,8 @@ const createAccount = async (account) => {
     const result = await pool.query(queries.createAccount, [
       name,
       category,
-      min_limit,
-      max_limit,
+      // min_limit,
+      // max_limit,
       balance,
       owner_id,
     ]);
@@ -83,8 +83,8 @@ const updateAccount = async (id, account) => {
     const result = await pool.query(queries.updateAccount, [
       name,
       category,
-      min_limit,
-      max_limit,
+      // min_limit,
+      // max_limit,
       balance,
       owner_id,
       id,

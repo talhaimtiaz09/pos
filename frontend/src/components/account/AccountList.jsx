@@ -73,7 +73,7 @@ const AccountsList = () => {
               <th className="p-4">Owner</th>
               <th className="p-4">Category</th>
               <th className="p-4">Balance</th>
-              <th className="p-4">Limits</th>
+              {/* <th className="p-4">Limits</th> */}
               <th className="p-4 text-right">Actions</th>
             </tr>
           </thead>
@@ -102,7 +102,8 @@ const AccountsList = () => {
                     </button>
                   </div>
                 </td>
-                <td className="p-4">
+                {/* Temporarily disabled account limit feature */}
+                {/* <td className="p-4">
                   <button
                     onClick={() => toggleVisibility(account.id, "limits")}
                     className="text-gray-600 hover:text-gray-800 flex items-center transition"
@@ -123,7 +124,7 @@ const AccountsList = () => {
                       <p>Max: {account.max_limit || "N/A"}</p>
                     </div>
                   )}
-                </td>
+                </td> */}
                 <td className="p-4 text-right">
                   <button
                     onClick={() => handleDeleteAccount(account.id)}

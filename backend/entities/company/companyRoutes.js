@@ -23,10 +23,10 @@ router.put("/bookings/:id", requestSeeker, companyController.updateBooking);
 router.delete("/bookings/:id", companyController.deleteBooking);
 
 // Sales Representative Routes
-router.get("/sales-reps", companyController.renderAllSalesReps);
-router.get("/sales-reps/:id", companyController.renderSalesRepById);
-router.post("/sales-reps", requestSeeker, companyController.createNewSalesRep);
-router.put("/sales-reps/:id", requestSeeker, companyController.updateSalesRep);
-router.delete("/sales-reps/:id", companyController.deleteSalesRep);
+// router.get("/sales-reps", companyController.renderAllSalesReps);
+// router.get("/sales-reps/:id", companyController.renderSalesRepById);
+// router.post("/sales-reps", requestSeeker, companyController.createNewSalesRep);
+// router.put("/sales-reps/:id", requestSeeker, companyController.updateSalesRep);
+// router.delete("/sales-reps/:id", companyController.deleteSalesRep);
 
 module.exports = router;
