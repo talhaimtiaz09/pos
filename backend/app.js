@@ -21,6 +21,7 @@ app.use((req, res, next) => {
   if (req.method === "DELETE") {
     return next();
   }
+
   bodyParser.json()(req, res, next);
 });
 

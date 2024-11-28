@@ -15,7 +15,7 @@ const ProductBatch = () => {
   const [batchDetails, setBatchDetails] = useState([]);
   const [productBatches, setProductBatches] = useState([]);
   const [products, setProducts] = useState([]);
-  const [locations, setLocations] = useState([]);
+  // const [locations, setLocations] = useState([]);
   const [inventories, setInventories] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedBatchDetails, setSelectedBatchDetails] = useState(null);
@@ -24,7 +24,7 @@ const ProductBatch = () => {
     purchase_price: "",
     is_active: true,
     product_id: "",
-    location_id: "",
+    // location_id: "",
     inventory_id: "",
   });
   const [editingBatch, setEditingBatch] = useState(null);
@@ -62,14 +62,14 @@ const ProductBatch = () => {
       }
     };
 
-    const getLocations = async () => {
-      try {
-        const response = await fetchData("/inventory/location", "GET");
-        setLocations(response.data);
-      } catch (err) {
-        setError("Failed to fetch locations.");
-      }
-    };
+    // const getLocations = async () => {
+    //   try {
+    //     const response = await fetchData("/inventory/location", "GET");
+    //     setLocations(response.data);
+    //   } catch (err) {
+    //     setError("Failed to fetch locations.");
+    //   }
+    // };
 
     const getInventories = async () => {
       try {
@@ -92,7 +92,7 @@ const ProductBatch = () => {
     getBatchDetails();
     getProductBatches();
     getProducts();
-    getLocations();
+    // getLocations();
     getInventories();
     getCategories();
   }, []);
@@ -106,7 +106,7 @@ const ProductBatch = () => {
         purchase_price: "",
         is_active: true,
         product_id: "",
-        location_id: "",
+        // location_id: "",
         inventory_id: "",
       });
     } catch (err) {
@@ -246,7 +246,7 @@ const ProductBatch = () => {
             </option>
           ))}
         </select>
-        <select
+        {/* <select
           className="border p-2 rounded-md flex-1"
           value={editingBatch ? editingBatch.location_id : newBatch.location_id}
           onChange={(e) =>
@@ -264,7 +264,7 @@ const ProductBatch = () => {
               {location.name}
             </option>
           ))}
-        </select>
+        </select> */}
         <select
           className="border p-2 rounded-md flex-1"
           value={
@@ -321,7 +321,7 @@ const ProductBatch = () => {
             <th className="p-2 border-b">Quantity</th>
             <th className="p-2 border-b">Purchase Price</th>
             <th className="p-2 border-b">Product</th>
-            <th className="p-2 border-b">Location</th>
+
             <th className="p-2 border-b">Inventory</th>
             <th className="p-2 border-b">Status</th>
             <th className="p-2 border-b">Actions</th>
@@ -335,7 +335,6 @@ const ProductBatch = () => {
               <td className="p-2 border-b">
                 {products.find((p) => p.id === batch.product_id)?.name}
               </td>
-              <td className="p-2 border-b">{batch.location_name}</td>
               <td className="p-2 border-b">{batch.inventory_name}</td>
               <td className="p-2 border-b">
                 {batch.is_active ? "Active" : "Inactive"}

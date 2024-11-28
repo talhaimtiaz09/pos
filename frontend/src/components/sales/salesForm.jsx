@@ -220,9 +220,17 @@ const SalesForm = () => {
                     Profit ++
                   </p>
                 ) : (
-                  <p className="mt-4 my-2 font-semibold text-lg text-red-500">
-                    Loss --
-                  </p>
+                  <>
+                    {newSale.price == purchasePrice ? (
+                      <p className="mt-4 my-2 font-semibold text-lg text-yellow-500">
+                        No Profit No Loss
+                      </p>
+                    ) : (
+                      <p className="mt-4 my-2 font-semibold text-lg text-red-500">
+                        Loss --
+                      </p>
+                    )}
+                  </>
                 )}
               </>
             )}

@@ -25,26 +25,24 @@ const queries = {
 
   // Product Batches queries
   getAllProductBatches: `
-      SELECT pb.*, bd.batch_number, i.inventory_name, il.location_name
+      SELECT pb.*, bd.batch_number, i.inventory_name 
       FROM product_batches pb
       LEFT JOIN batch_details bd ON pb.id = bd.batch_id
-      LEFT JOIN inventory_locations il ON pb.location_id = il.id
       LEFT JOIN inventory i ON pb.inventory_id = i.id
       ORDER BY pb.id`,
   getProductBatchById: `
-      SELECT pb.*, bd.batch_number, i.inventory_name, il.location_name
+      SELECT pb.*, bd.batch_number, i.inventory_name 
       FROM product_batches pb
       LEFT JOIN batch_details bd ON pb.id = bd.batch_id
-      LEFT JOIN inventory_locations il ON pb.location_id = il.id
       LEFT JOIN inventory i ON pb.inventory_id = i.id
       WHERE pb.id = $1`,
   createProductBatch: `
-      INSERT INTO product_batches (quantity, product_id, purchase_price, is_active, location_id, inventory_id)
-      VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+      INSERT INTO product_batches (quantity, product_id, purchase_price, is_active, inventory_id)
+      VALUES ($1, $2, $3, $4, $5) RETURNING *`,
   updateProductBatch: `
       UPDATE product_batches
-      SET quantity = $1, product_id = $2, purchase_price = $3, is_active = $4, location_id = $5, inventory_id = $6
-      WHERE id = $7 RETURNING *`,
+      SET quantity = $1, product_id = $2, purchase_price = $3, is_active = $4, inventory_id = $5
+      WHERE id = $6 RETURNING *`,
   removeProductBatch: "DELETE FROM product_batches WHERE id = $1",
 
   // Inventory Records queries
@@ -72,14 +70,14 @@ const queries = {
   removeInventoryRecord: "DELETE FROM inventory_records WHERE id = $1",
 
   // Inventory Locations queries
-  getAllInventoryLocations:
-    "SELECT * FROM inventory_locations ORDER BY location_name",
-  getInventoryLocationById: "SELECT * FROM inventory_locations WHERE id = $1",
-  createInventoryLocation:
-    "INSERT INTO inventory_locations (location_name) VALUES ($1) RETURNING *",
-  updateInventoryLocation:
-    "UPDATE inventory_locations SET location_name = $1 WHERE id = $2 RETURNING *",
-  removeInventoryLocation: "DELETE FROM inventory_locations WHERE id = $1",
+  // getAllInventoryLocations:
+  //   "SELECT * FROM inventory_locations ORDER BY location_name",
+  // getInventoryLocationById: "SELECT * FROM inventory_locations WHERE id = $1",
+  // createInventoryLocation:
+  //   "INSERT INTO inventory_locations (location_name) VALUES ($1) RETURNING *",
+  // updateInventoryLocation:
+  //   "UPDATE inventory_locations SET location_name = $1 WHERE id = $2 RETURNING *",
+  // removeInventoryLocation: "DELETE FROM inventory_locations WHERE id = $1",
 
   // Stock queries
   getAllStock: "SELECT * FROM stock ORDER BY product_id",
@@ -188,7 +186,7 @@ const createProductBatch = async (productBatch) => {
     product_id,
     purchase_price,
     is_active,
-    location_id,
+    // // location_id,
     inventory_id,
   } = productBatch;
   try {
@@ -198,7 +196,7 @@ const createProductBatch = async (productBatch) => {
       product_id,
       purchase_price,
       is_active,
-      location_id,
+      // // location_id,
       inventory_id,
     ]);
     return result.rows[0];
@@ -214,7 +212,7 @@ const updateProductBatch = async (id, productBatch) => {
     product_id,
     purchase_price,
     is_active,
-    location_id,
+    // location_id,
     inventory_id,
   } = productBatch;
   try {
@@ -224,7 +222,7 @@ const updateProductBatch = async (id, productBatch) => {
       product_id,
       purchase_price,
       is_active,
-      location_id,
+      // location_id,
       inventory_id,
       id,
     ]);
@@ -374,66 +372,66 @@ const removeInventoryRecord = async (id) => {
 };
 
 // Inventory Locations functions
-const getAllInventoryLocations = async () => {
-  try {
-    console.log("Fetching all inventory locations");
-    const result = await pool.query(queries.getAllInventoryLocations);
-    return result.rows;
-  } catch (error) {
-    console.error("Error fetching all inventory locations:", error);
-    throw error;
-  }
-};
+// const getAllInventoryLocations = async () => {
+//   try {
+//     console.log("Fetching all inventory locations");
+//     const result = await pool.query(queries.getAllInventoryLocations);
+//     return result.rows;
+//   } catch (error) {
+//     console.error("Error fetching all inventory locations:", error);
+//     throw error;
+//   }
+// };
 
-const getInventoryLocationById = async (id) => {
-  try {
-    console.log(`Fetching inventory location by ID: ${id}`);
-    const result = await pool.query(queries.getInventoryLocationById, [id]);
-    return result.rows[0];
-  } catch (error) {
-    console.error(`Error fetching inventory location by ID (${id}):`, error);
-    throw error;
-  }
-};
+// const getInventoryLocationById = async (id) => {
+//   try {
+//     console.log(`Fetching inventory location by ID: ${id}`);
+//     const result = await pool.query(queries.getInventoryLocationById, [id]);
+//     return result.rows[0];
+//   } catch (error) {
+//     console.error(`Error fetching inventory location by ID (${id}):`, error);
+//     throw error;
+//   }
+// };
 
-const createInventoryLocation = async (inventoryLocation) => {
-  const { location_name } = inventoryLocation;
-  try {
-    console.log("Creating new inventory location");
-    const result = await pool.query(queries.createInventoryLocation, [
-      location_name,
-    ]);
-    return result.rows[0];
-  } catch (error) {
-    console.error("Error creating new inventory location:", error);
-    throw error;
-  }
-};
+// const createInventoryLocation = async (inventoryLocation) => {
+//   const { location_name } = inventoryLocation;
+//   try {
+//     console.log("Creating new inventory location");
+//     const result = await pool.query(queries.createInventoryLocation, [
+//       location_name,
+//     ]);
+//     return result.rows[0];
+//   } catch (error) {
+//     console.error("Error creating new inventory location:", error);
+//     throw error;
+//   }
+// };
 
-const updateInventoryLocation = async (id, inventoryLocation) => {
-  const { location_name } = inventoryLocation;
-  try {
-    console.log(`Updating inventory location with ID: ${id}`);
-    const result = await pool.query(queries.updateInventoryLocation, [
-      location_name,
-      id,
-    ]);
-    return result.rows[0];
-  } catch (error) {
-    console.error(`Error updating inventory location (${id}):`, error);
-    throw error;
-  }
-};
+// const updateInventoryLocation = async (id, inventoryLocation) => {
+//   const { location_name } = inventoryLocation;
+//   try {
+//     console.log(`Updating inventory location with ID: ${id}`);
+//     const result = await pool.query(queries.updateInventoryLocation, [
+//       location_name,
+//       id,
+//     ]);
+//     return result.rows[0];
+//   } catch (error) {
+//     console.error(`Error updating inventory location (${id}):`, error);
+//     throw error;
+//   }
+// };
 
-const removeInventoryLocation = async (id) => {
-  try {
-    console.log(`Deleting inventory location with ID: ${id}`);
-    await pool.query(queries.removeInventoryLocation, [id]);
-  } catch (error) {
-    console.error(`Error deleting inventory location (${id}):`, error);
-    throw error;
-  }
-};
+// const removeInventoryLocation = async (id) => {
+//   try {
+//     console.log(`Deleting inventory location with ID: ${id}`);
+//     await pool.query(queries.removeInventoryLocation, [id]);
+//   } catch (error) {
+//     console.error(`Error deleting inventory location (${id}):`, error);
+//     throw error;
+//   }
+// };
 
 // Stock functions
 const getAllStock = async () => {
@@ -530,12 +528,12 @@ module.exports = {
   updateInventoryRecord,
   removeInventoryRecord,
 
-  // Inventory Locations functions
-  getAllInventoryLocations,
-  getInventoryLocationById,
-  createInventoryLocation,
-  updateInventoryLocation,
-  removeInventoryLocation,
+  // // Inventory Locations functions
+  // getAllInventoryLocations,
+  // getInventoryLocationById,
+  // createInventoryLocation,
+  // updateInventoryLocation,
+  // removeInventoryLocation,
 
   // Stock functions
   getAllStock,

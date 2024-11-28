@@ -24,8 +24,9 @@ const rendercustomerById = async (req, res) => {
 
 const createNewcustomer = async (req, res) => {
   try {
+    console.log("testing customer route");
     const customer = await customerModel.create(req.body);
-    console.log(customer);
+    console.log(`New customer Data : ${customer}`);
     if (customer.code === "23505") {
       return res
         .status(400)
@@ -34,7 +35,7 @@ const createNewcustomer = async (req, res) => {
     const data = customer;
     res.status(200).json({ data, message: "New customer created" });
   } catch (error) {
-    res.status(500).json({ message: "Error creating new customer" });
+    res.status(500).json({ message: `Error creating new customer: ${error}` });
   }
 };
 

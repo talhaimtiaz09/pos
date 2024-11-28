@@ -23,12 +23,12 @@ router.post("/record", inventoryController.createNewInventoryRecord);
 router.put("/record/:id", inventoryController.updateInventoryRecord);
 router.delete("/record/:id", inventoryController.deleteInventoryRecord);
 
-// Inventory Locations Routes
-router.get("/location", inventoryController.renderAllInventoryLocations);
-router.get("/location/:id", inventoryController.renderInventoryLocationById);
-router.post("/location", inventoryController.createNewInventoryLocation);
-router.put("/location/:id", inventoryController.updateInventoryLocation);
-router.delete("/location/:id", inventoryController.deleteInventoryLocation);
+// // Inventory Locations Routes
+// router.get("/location", inventoryController.renderAllInventoryLocations);
+// router.get("/location/:id", inventoryController.renderInventoryLocationById);
+// router.post("/location", inventoryController.createNewInventoryLocation);
+// router.put("/location/:id", inventoryController.updateInventoryLocation);
+// router.delete("/location/:id", inventoryController.deleteInventoryLocation);
 
 // Stock Routes
 router.get("/stock", inventoryController.renderAllStock);

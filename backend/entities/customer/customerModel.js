@@ -37,6 +37,8 @@ const getById = async (id) => {
 // Create a new customer
 const create = async (customer) => {
   const { name, address, phone } = customer;
+
+  console.log("Creating new customer with data from frontend :", customer);
   try {
     const result = await pool.query(queries.create, [name, address, phone]);
     return result.rows[0];

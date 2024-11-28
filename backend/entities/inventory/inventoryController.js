@@ -328,100 +328,100 @@ const deleteInventoryRecord = async (req, res) => {
 };
 
 // Inventory Locations Controllers
-const renderAllInventoryLocations = async (req, res) => {
-  try {
-    console.log("Controller: Fetching all inventory locations");
-    const inventoryLocations = await inventoryModel.getAllInventoryLocations();
-    res.status(200).json({
-      data: inventoryLocations,
-      message: "All inventory locations fetched",
-    });
-  } catch (error) {
-    console.error("Controller: Error fetching all inventory locations:", error);
-    res.status(500).json({ message: "Error fetching all inventory locations" });
-  }
-};
+// const renderAllInventoryLocations = async (req, res) => {
+//   try {
+//     console.log("Controller: Fetching all inventory locations");
+//     const inventoryLocations = await inventoryModel.getAllInventoryLocations();
+//     res.status(200).json({
+//       data: inventoryLocations,
+//       message: "All inventory locations fetched",
+//     });
+//   } catch (error) {
+//     console.error("Controller: Error fetching all inventory locations:", error);
+//     res.status(500).json({ message: "Error fetching all inventory locations" });
+//   }
+// };
 
-const renderInventoryLocationById = async (req, res) => {
-  try {
-    console.log(
-      `Controller: Fetching inventory location by ID: ${req.params.id}`
-    );
-    const inventoryLocation = await inventoryModel.getInventoryLocationById(
-      req.params.id
-    );
-    if (!inventoryLocation)
-      return res.status(404).json({ message: "Inventory location not found" });
-    res.status(200).json({
-      data: inventoryLocation,
-      message: "Inventory location fetched by ID",
-    });
-  } catch (error) {
-    console.error(
-      `Controller: Error fetching inventory location by ID (${req.params.id}):`,
-      error
-    );
-    res
-      .status(500)
-      .json({ message: "Error fetching inventory location by ID" });
-  }
-};
+// const renderInventoryLocationById = async (req, res) => {
+//   try {
+//     console.log(
+//       `Controller: Fetching inventory location by ID: ${req.params.id}`
+//     );
+//     const inventoryLocation = await inventoryModel.getInventoryLocationById(
+//       req.params.id
+//     );
+//     if (!inventoryLocation)
+//       return res.status(404).json({ message: "Inventory location not found" });
+//     res.status(200).json({
+//       data: inventoryLocation,
+//       message: "Inventory location fetched by ID",
+//     });
+//   } catch (error) {
+//     console.error(
+//       `Controller: Error fetching inventory location by ID (${req.params.id}):`,
+//       error
+//     );
+//     res
+//       .status(500)
+//       .json({ message: "Error fetching inventory location by ID" });
+//   }
+// };
 
-const createNewInventoryLocation = async (req, res) => {
-  try {
-    console.log("Controller: Creating new inventory location");
-    const inventoryLocation = await inventoryModel.createInventoryLocation(
-      req.body
-    );
-    res.status(201).json({
-      data: inventoryLocation,
-      message: "New inventory location created",
-    });
-  } catch (error) {
-    console.error("Controller: Error creating new inventory location:", error);
-    res.status(500).json({ message: "Error creating new inventory location" });
-  }
-};
+// const createNewInventoryLocation = async (req, res) => {
+//   try {
+//     console.log("Controller: Creating new inventory location");
+//     const inventoryLocation = await inventoryModel.createInventoryLocation(
+//       req.body
+//     );
+//     res.status(201).json({
+//       data: inventoryLocation,
+//       message: "New inventory location created",
+//     });
+//   } catch (error) {
+//     console.error("Controller: Error creating new inventory location:", error);
+//     res.status(500).json({ message: "Error creating new inventory location" });
+//   }
+// };
 
-const updateInventoryLocation = async (req, res) => {
-  try {
-    console.log(
-      `Controller: Updating inventory location with ID: ${req.params.id}`
-    );
-    const inventoryLocation = await inventoryModel.updateInventoryLocation(
-      req.params.id,
-      req.body
-    );
-    res.status(200).json({
-      data: inventoryLocation,
-      message: "Inventory location updated successfully",
-    });
-  } catch (error) {
-    console.error(
-      `Controller: Error updating inventory location (${req.params.id}):`,
-      error
-    );
-    res.status(500).json({ message: "Error updating inventory location" });
-  }
-};
+// const updateInventoryLocation = async (req, res) => {
+//   try {
+//     console.log(
+//       `Controller: Updating inventory location with ID: ${req.params.id}`
+//     );
+//     const inventoryLocation = await inventoryModel.updateInventoryLocation(
+//       req.params.id,
+//       req.body
+//     );
+//     res.status(200).json({
+//       data: inventoryLocation,
+//       message: "Inventory location updated successfully",
+//     });
+//   } catch (error) {
+//     console.error(
+//       `Controller: Error updating inventory location (${req.params.id}):`,
+//       error
+//     );
+//     res.status(500).json({ message: "Error updating inventory location" });
+//   }
+// };
 
-const deleteInventoryLocation = async (req, res) => {
-  try {
-    console.log(
-      `Controller: Deleting inventory location with ID: ${req.params.id}`
-    );
-    await inventoryModel.removeInventoryLocation(req.params.id);
-    res
-      .status(200)
-      .json({ message: "Inventory location deleted successfully" });
-  } catch (error) {
-    console.error(
-      `Controller: Error deleting inventory location (${req.params.id}):`,
-      error
-    );
-    res.status(500).json({ message: "Error deleting inventory location" });
-  }
-};
+// const deleteInventoryLocation = async (req, res) => {
+//   try {
+//     console.log(
+//       `Controller: Deleting inventory location with ID: ${req.params.id}`
+//     );
+//     await inventoryModel.removeInventoryLocation(req.params.id);
+//     res
+//       .status(200)
+//       .json({ message: "Inventory location deleted successfully" });
+//   } catch (error) {
+//     console.error(
+//       `Controller: Error deleting inventory location (${req.params.id}):`,
+//       error
+//     );
+//     res.status(500).json({ message: "Error deleting inventory location" });
+//   }
+// };
 
 // Stock Controllers
 const renderAllStock = async (req, res) => {
@@ -520,12 +520,12 @@ module.exports = {
   updateInventoryRecord,
   deleteInventoryRecord,
 
-  // Inventory Locations controllers
-  renderAllInventoryLocations,
-  renderInventoryLocationById,
-  createNewInventoryLocation,
-  updateInventoryLocation,
-  deleteInventoryLocation,
+  // // Inventory Locations controllers
+  // renderAllInventoryLocations,
+  // renderInventoryLocationById,
+  // createNewInventoryLocation,
+  // updateInventoryLocation,
+  // deleteInventoryLocation,
 
   // Stock controllers
   renderAllStock,

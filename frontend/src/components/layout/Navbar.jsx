@@ -88,7 +88,6 @@ const Navbar = () => {
           icon={<FontAwesomeIcon icon={faBox} />}
           links={[
             { name: "Add Inventory", path: "/inventory/register" },
-            { name: "Locations", path: "/inventory/location" },
             { name: "Records", path: "/inventory/record" },
             { name: "Stock", path: "/inventory/stock" },
           ]}

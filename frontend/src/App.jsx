@@ -7,10 +7,10 @@ import { fab } from "@fortawesome/free-brands-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 
-import CustomersPage from "./pages/CustomersPage";
+import CustomersPage from "./pages/CustomersDashboard";
 import Dashboard from "./pages/Dashboard";
 import LoginPage from "./pages/LoginPage";
-import ProductsPage from "./pages/ProductsPage";
+import ProductsPage from "./pages/ProductsDashboard";
 import RegisterPage from "./pages/RegisterPage";
 import TransactionsPage from "./pages/TransactionsPage";
 import CustomerCreateForm from "./components/customers/CustomerCreateForm";
@@ -28,7 +28,6 @@ import AccountCategory from "./components/account/AccountCategory";
 import ProductBatch from "./components/products/ProductBatch";
 import ProductBatchDetails from "./components/products/ProductBatchDetails";
 import Inventory from "./components/inventory/Inventory";
-import InventoryLocations from "./components/inventory/InventoryLocations";
 import SalesForm from "./components/sales/salesForm";
 import CreditSalesForm from "./components/sales/creditSalesForm";
 import CreditPaymentForm from "./components/sales/creditPaymentForm";
@@ -42,9 +41,9 @@ const App = () => (
     <Navbar />
     <div className=" bg-bkg-dark ml-64">
       <Routes>
+        <Route path="/" element={<Dashboard />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/customer">
           <Route path="" element={<CustomersPage />} />
           <Route path="create" element={<CustomerCreateForm />} />
@@ -82,7 +81,7 @@ const App = () => (
 
         <Route path="/inventory">
           <Route path="register" element={<Inventory />} />
-          <Route path="location" element={<InventoryLocations />} />
+
           <Route path="record" element={<InventoryRecords />} />
           <Route path="stock" element={<InventoryStock />} />
         </Route>

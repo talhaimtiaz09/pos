@@ -9,190 +9,137 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import fetchData from "../../utils/fetchData";
 
-// Function to format balance into Pakistani currency
 const formatCurrency = (amount) => {
-  if (amount == null || amount === "") return "N/A";
-
-  // Convert to number
+  if (!amount) return "N/A";
   const num = parseFloat(amount);
-
-  // Check for NaN
   if (isNaN(num)) return "N/A";
 
-  // Convert to Pakistani currency format
   const lac = Math.floor(num / 100000);
   const rupees = num % 100000;
 
-  return (
-    <div className="my-4">
-      {lac > 0 && <div className="text-4xl">{lac.toLocaleString()} lac</div>}
-      {rupees > 0 && (
-        <div className="text-2xl">{rupees.toLocaleString()} rupees</div>
-      )}
-    </div>
-  );
+  return `${lac > 0 ? `${lac.toLocaleString()} lac ` : ""}${
+    rupees > 0 ? `${rupees.toLocaleString()} rupees` : ""
+  }`.trim();
 };
 
 const AccountsList = () => {
   const [accounts, setAccounts] = useState([]);
-  const [balanceVisibility, setBalanceVisibility] = useState({});
-  const [limitsVisibility, setLimitsVisibility] = useState({});
-  const [trashVisibility, setTrashVisibility] = useState({});
+  const [visibility, setVisibility] = useState({});
 
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
         const response = await fetchData("/account", "GET");
+        const accountData = response.data.reduce(
+          (acc, account) => ({
+            ...acc,
+            [account.id]: { balance: false, limits: false },
+          }),
+          {}
+        );
         setAccounts(response.data);
-        setBalanceVisibility(
-          response.data.reduce((acc, account) => {
-            acc[account.id] = false; // Initialize all balances as hidden
-            return acc;
-          }, {})
-        );
-        setLimitsVisibility(
-          response.data.reduce((acc, account) => {
-            acc[account.id] = false; // Initialize all limits as hidden
-            return acc;
-          }, {})
-        );
-        setTrashVisibility(
-          response.data.reduce((acc, account) => {
-            acc[account.id] = false; // Initialize all trash icons as hidden
-            return acc;
-          }, {})
-        );
+        setVisibility(accountData);
       } catch (err) {
         console.error(err.message || "Failed to fetch accounts.");
       }
     };
-
     fetchAccounts();
   }, []);
 
-  const toggleBalanceVisibility = (id) => {
-    setBalanceVisibility((prev) => ({
+  const toggleVisibility = (id, field) => {
+    setVisibility((prev) => ({
       ...prev,
-      [id]: !prev[id],
-    }));
-  };
-
-  const toggleLimitsVisibility = (id) => {
-    setLimitsVisibility((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
-
-  const toggleTrashVisibility = (id) => {
-    setTrashVisibility((prev) => ({
-      ...prev,
-      [id]: !prev[id],
+      [id]: { ...prev[id], [field]: !prev[id][field] },
     }));
   };
 
   const handleDeleteAccount = async (id) => {
     try {
       await fetchData(`/account/${id}`, "DELETE");
-      setAccounts((prevAccounts) =>
-        prevAccounts.filter((account) => account.id !== id)
-      );
+      setAccounts((prev) => prev.filter((account) => account.id !== id));
     } catch (err) {
       console.error(err.message || "Failed to delete account.");
     }
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto my-10">
-      <h2 className="text-3xl font-bold mb-8 text-gray-800">Accounts List</h2>
-      <div className="flex flex-wrap gap-8">
-        {accounts.length > 0 ? (
-          accounts.map((account) => (
-            <div
-              key={account.id}
-              className="bg-white w-full p-6 rounded-lg shadow-md relative border border-gray-200"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <div className="text-3xl font-semibold text-gray-800">
-                  {balanceVisibility[account.id] ? (
-                    formatCurrency(account.balance)
-                  ) : (
-                    <span className="tracking-widest text-gray-400">*****</span>
-                  )}
-                </div>
-                <button
-                  onClick={() => toggleBalanceVisibility(account.id)}
-                  className="text-primary hover:text-primary-hover transition"
-                >
-                  <FontAwesomeIcon
-                    icon={balanceVisibility[account.id] ? faEyeSlash : faEye}
-                    size="lg"
-                  />
-                </button>
-              </div>
-
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                    {account.name}
-                  </h3>
-                  <p className="text-gray-600 mb-2">
-                    {account.owner_name || "N/A"}
-                  </p>
-                  <p className="text-primary mb-4">{account.category_name}</p>
-                </div>
-                <div>
+    <div className="max-w-6xl mx-auto my-8">
+      <h2 className="text-2xl font-bold text-gray-700 mb-6">Accounts List</h2>
+      {accounts.length > 0 ? (
+        <table className="min-w-full bg-white border rounded-md shadow-sm">
+          <thead className="bg-gray-100 text-gray-700 text-left">
+            <tr>
+              <th className="p-4">Account Name</th>
+              <th className="p-4">Owner</th>
+              <th className="p-4">Category</th>
+              <th className="p-4">Balance</th>
+              <th className="p-4">Limits</th>
+              <th className="p-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {accounts.map((account) => (
+              <tr key={account.id} className="border-t">
+                <td className="p-4 text-gray-800">{account.name}</td>
+                <td className="p-4 text-gray-600">
+                  {account.owner_name || "N/A"}
+                </td>
+                <td className="p-4 text-blue-600">{account.category_name}</td>
+                <td className="p-4">
+                  <div className="flex items-center">
+                    {visibility[account.id]?.balance
+                      ? formatCurrency(account.balance)
+                      : "*****"}
+                    <button
+                      onClick={() => toggleVisibility(account.id, "balance")}
+                      className="ml-3 text-gray-600 hover:text-gray-800 transition"
+                    >
+                      <FontAwesomeIcon
+                        icon={
+                          visibility[account.id]?.balance ? faEyeSlash : faEye
+                        }
+                      />
+                    </button>
+                  </div>
+                </td>
+                <td className="p-4">
                   <button
-                    onClick={() => toggleLimitsVisibility(account.id)}
-                    className="flex items-center text-gray-500 hover:text-gray-600 transition mb-4 "
+                    onClick={() => toggleVisibility(account.id, "limits")}
+                    className="text-gray-600 hover:text-gray-800 flex items-center transition"
                   >
-                    <span className="mr-2">Limits</span>
+                    {visibility[account.id]?.limits ? "Hide" : "View"}
                     <FontAwesomeIcon
                       icon={
-                        limitsVisibility[account.id]
+                        visibility[account.id]?.limits
                           ? faChevronUp
                           : faChevronDown
                       }
-                      size="sm"
+                      className="ml-2"
                     />
                   </button>
-                  {limitsVisibility[account.id] && (
-                    <div>
-                      <p className="text-gray-600 mb-4">
-                        Min: {account.min_limit || "N/A"}
-                      </p>
-                      <p className="text-gray-600 mb-4">
-                        Max: {account.max_limit || "N/A"}
-                      </p>
+                  {visibility[account.id]?.limits && (
+                    <div className="mt-2 text-sm text-gray-500">
+                      <p>Min: {account.min_limit || "N/A"}</p>
+                      <p>Max: {account.max_limit || "N/A"}</p>
                     </div>
                   )}
-                </div>
-              </div>
-
-              <div className="absolute bottom-6 right-6 flex space-x-3">
-                <button
-                  onClick={() => toggleTrashVisibility(account.id)}
-                  className={`text-red-500 hover:text-red-600 transition ${
-                    trashVisibility[account.id] ? "block" : "hidden"
-                  }`}
-                >
-                  <FontAwesomeIcon icon={faTrashAlt} size="lg" />
-                </button>
-                {trashVisibility[account.id] && (
+                </td>
+                <td className="p-4 text-right">
                   <button
                     onClick={() => handleDeleteAccount(account.id)}
-                    className="text-red-500 hover:text-red-600 transition"
+                    className="text-red-500 hover:text-red-600 text-sm flex items-center gap-2 transition"
                   >
-                    <FontAwesomeIcon icon={faTrashAlt} size="lg" />
+                    <FontAwesomeIcon icon={faTrashAlt} />
+                    Delete
                   </button>
-                )}
-              </div>
-            </div>
-          ))
-        ) : (
-          <p className="text-center text-gray-400">No accounts available</p>
-        )}
-      </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p className="text-center text-gray-500">No accounts available</p>
+      )}
     </div>
   );
 };

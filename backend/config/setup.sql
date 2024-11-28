@@ -18,7 +18,7 @@ DROP TABLE IF EXISTS public.damages CASCADE;
 DROP TABLE IF EXISTS public.inventory CASCADE;
 DROP TABLE IF EXISTS public.inventory_records CASCADE;
 DROP TABLE IF EXISTS public.inventory_items CASCADE;
-DROP TABLE IF EXISTS public.inventory_locations CASCADE;
+-- DROP TABLE IF EXISTS public.inventory_locations CASCADE;
 DROP TABLE IF EXISTS public.batch_locations CASCADE;
 DROP TABLE IF EXISTS public.credit_payment CASCADE;
 DROP TABLE IF EXISTS public.weekly_analytics CASCADE;
@@ -113,11 +113,11 @@ CREATE TABLE IF NOT EXISTS public.inventory (
     inventory_name varchar(255) NOT NULL UNIQUE
 );
 
--- Create inventory locations table
-CREATE TABLE IF NOT EXISTS public.inventory_locations (
-    id serial PRIMARY KEY,
-    location_name varchar(255) NOT NULL UNIQUE
-);
+-- -- Create inventory locations table
+-- CREATE TABLE IF NOT EXISTS public.inventory_locations (
+--     id serial PRIMARY KEY,
+--     location_name varchar(255) NOT NULL UNIQUE
+-- );
 
 -- Create product batches table
 CREATE TABLE IF NOT EXISTS public.product_batches (
@@ -126,10 +126,10 @@ CREATE TABLE IF NOT EXISTS public.product_batches (
     product_id integer NOT NULL,
     purchase_price numeric(10, 2) NOT NULL,
     is_active boolean DEFAULT TRUE,
-    location_id integer,
+    -- location_id integer,
     inventory_id integer,
     FOREIGN KEY (product_id) REFERENCES public.products (id),
-    FOREIGN KEY (location_id) REFERENCES public.inventory_locations (id),
+    -- FOREIGN KEY (location_id) REFERENCES public.inventory_locations (id),
     FOREIGN KEY (inventory_id) REFERENCES public.inventory (id)
 );
 
@@ -362,21 +362,21 @@ INSERT INTO public.inventory (inventory_name) VALUES
 ('Outlet 2'),
 ('Outlet 3');
 
--- Insert data into inventory_locations
-INSERT INTO public.inventory_locations (location_name) VALUES
-('Karachi Warehouse'),
-('Lahore Warehouse'),
-('Islamabad Store'),
-('Multan Store'),
-('Quetta Store');
+-- -- Insert data into inventory_locations
+-- INSERT INTO public.inventory_locations (location_name) VALUES
+-- ('Karachi Warehouse'),
+-- ('Lahore Warehouse'),
+-- ('Islamabad Store'),
+-- ('Multan Store'),
+-- ('Quetta Store');
 
 -- Insert data into product_batches
-INSERT INTO public.product_batches (quantity, product_id, purchase_price, location_id, inventory_id) VALUES
-(100, 1, 100000, 1, 1),
-(200, 2, 500, 2, 2),
-(300, 3, 150, 3, 3),
-(50, 4, 7500, 4, 4),
-(500, 5, 50, 5, 5);
+INSERT INTO public.product_batches (quantity, product_id, purchase_price, inventory_id) VALUES
+(100, 1, 100000, 1),
+(200, 2, 500,  2),
+(300, 3, 150, 3),
+(50, 4, 7500, 4),
+(500, 5, 50, 5);
 
 -- Insert data into batch_details
 INSERT INTO public.batch_details (batch_id, batch_number, manufacture_date, expiry_date) VALUES
